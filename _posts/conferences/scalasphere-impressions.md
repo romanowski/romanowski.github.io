@@ -1,3 +1,11 @@
+---
+layout: post
+title: "ScalaSphere 2016: few impressions from tooling developer"
+date: 2016-04-02 22:00:00
+category: conferences
+tags: [conferences scala tooling]
+featured_image: /images/cover.jpg
+---
 # ScalaSphere 2016: few impressions from tooling developer
 
 ## Scalasphere: conference focused on technical problems and solutions
