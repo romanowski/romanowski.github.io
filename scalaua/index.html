@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>50 shades of Scala Compiler</title>
+	<meta name="description" content="Overview of scala compilers">
+	<meta name="author" content="Krzysztof Romanowski">
+
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+	<meta name="viewport"
+	      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+	<style type="text/css">
+		.lefty {
+			text-align: left;
+			font-size: 65% !important;
+			margin-left: 5%  !important;
+		}
+		blockquote {
+			width: 100% !important;
+		}
+
+		.scala {
+		 width: 950px !important;
+		 margin-left: -75px !important;
+		}
+
+	</style>
+
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+	<!-- Code syntax highlighting -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<!-- Printing and PDF exports -->
+	<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+
+
+	</script>
+
+	<!--[if lt IE 9]>
+	<script src="lib/js/html5shiv.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+
+<div class="reveal">
+
+	<!-- Any section element inside of this container is displayed as a slide -->
+	<div class="slides">
+
+		<section data-markdown>
+			<script type="text/template">
+				### Krzysztof Romanowski
+
+				romanowski.kr@gmail.com
+
+				<div style="margin-left: 36% text-align: left;">
+					<img src="imgs/gh.png" style="background: none; border: none; margin: 0px"> romanowski
+					<br/>
+					<img src="imgs/twitter.png" style="background: none; border: none; margin: 0px"> RomanowskiKr
+
+				</div>
+
+				<img src="imgs/vl.png" alt="Virtus Lab" style="background: none; border: none; box-shadow: none"/>
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				### Krzysztof Romanowski
+
+				<br/>
+
+
+				* Scala tooling developert for > 2 MLoC Scala project
+				* Zinc, ScalaIDE conytibutor
+				* author of Hoarder sbt plugin
+				* 6 years of commercial scala experience
+
+				<br/>
+
+				<img src="imgs/vl.png" alt="Virtus Lab" style="background: none; border: none; box-shadow: none"/>
+			</script>
+		</section>
+
+		<!-- ################################################################################################################ -->
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					## 50 shades of Scala Compiler
+
+					Note:
+					* TODO add shades!
+				</script>
+			</section>
+		</section>
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					## How many scala compiler
+					### is out there?
+
+					<br>
+
+					> Scala Compiler Sees Two Forks in One Week &mdash;&nbsp;[Infoq&nbsp;on&nbsp;Sep&nbsp;16,&nbsp;2014](https://www.infoq.com/news/2014/09/scala-compiler-forks)
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					## Compiler
+
+					> A compiler is a computer program (or a set of programs) that transforms source code written in a programming language (the source language) into another computer language (the target language), with the latter often having a binary form known as object code.
+					> &mdash; [Wikipedia](https://en.wikipedia.org/wiki/Compiler)
+
+					Note:
+					Sth is a 'scala compiler' if:
+					* scala sources as input
+
+					* understand types and report type failure
+
+					* better quotation is needed
+				</script>
+			</section>
+		</section>
+
+		<!-- ################################################################################################################ -->
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					## scalac
+				</script>
+			</section>
+
+			<section data-markdown data-separator-notes="Notes:">
+				<script type="text/template">
+					The point of reference
+
+					<img src="imgs/scala-cover.png" style="max-width: 350px; background: none; border: none; margin: 15px"/>
+					<img class="fragment" src="imgs/scalac-bugs.png" style="max-width: 650px; position: absolute; left: 133px; top: 301px;">
+
+
+					Notes:
+					* SLS (Scala language specification) should be used here - but no tests are created (but should)
+
+					* scalac from command line, John Pretty is probably the only users
+				</script>
+			</section>
+		</section>
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					## dotty
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					## dotty
+
+					> Is it the future Scala? - Yes, it will be - eventually. &mdash;&nbsp;[dotty.epfl.ch](http://dotty.epfl.ch/)
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### dotty
+
+					<img src="imgs/dotty-cover.png" style="max-width: 350px; background: none; border: none; margin: 15px"/>
+
+
+					* Union, intersection and literal singleton types
+					* Trait parameters
+					* @static methods and fields
+					* better pattern matching (option-less, exhaustivity checks)
+					* more: [http://dotty.epfl.ch/#so-features](http://dotty.epfl.ch/#so-features)
+				</script>
+			</section>
+		</section>
+
+		<!-- ################################################################################################################ -->
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					## Typelevel Scala and scalac
+
+					<br>
+
+					> Let the Scala compiler work for you <!-- .element: class="fragment" -->
+
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					Playground for scala
+
+					<img src="imgs/typelevelscala-cover.png" style="max-width: 350px; background: none; border: none; margin: 15px">
+
+
+					* Improved compile times for inductive implicits <!-- .element: class="fragment" -->
+					* Improved error reporting for implicit resolution failures <!-- .element: class="fragment" -->
+					* Support for alternative scala.Predef <!-- .element: class="fragment" -->
+					* <!-- .element: class="fragment" --> Even more on [roadmap](http://typelevel.org/scala/)
+
+					Note:
+					- Fameous fix: SI-2712 for Partial unification of type constructors
+
+					- Playground for scala, use if you are affected by bugs it fixes (instead of workaround it yourself)
+
+					- SIP-23 as example http://docs.scala-lang.org/sips/pending/42.type.html
+
+					- TODO? history
+					https://skillsmatter.com/skillscasts/9043-typelevel-scala-rebooted?utm_content=buffer2f364&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer
+
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template" data-separator-notes="Notes:">
+					More:
+
+					* Mails's talks at [ScalaExchange 2016](https://skillsmatter.com/skillscasts/9043-typelevel-scala-rebooted)
+					* Official page: [typelevel.org/scala](http://typelevel.org/scala/)
+					* Hackking on scala: [milessabin.com/blog/2016/05/13/scalac-hacking](https://milessabin.com/blog/2016/05/13/scalac-hacking)
+
+					Note:
+					- change this slide?
+				</script>
+			</section>
+		</section>
+
+		<!-- ################################################################################################################ -->
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					## Triplequotes' Hydra compiler
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### Faster (parallel) scalac
+
+					<img src="imgs/hydra-times.png">
+
+					Note:
+					* best speed up is 6x on 10 cores
+
+				</script>
+			</section>
+
+			<section data-markdown data-separator-notes="Notes:">
+				<script type="text/template">
+					Triplequotes' Hydra compiler
+
+					<img src="imgs/hydra-cover.png" style="max-width: 350px; background: none; border: none; margin: 15px"/>
+
+					* SIP-25 in future <!-- .element: class="fragment" -->
+
+					Notes:
+
+					- SIP-25 Trait Parameters
+
+					- Commercial product
+
+					- closed beta tests
+
+					- Parallel scala + sharing
+
+					- Overhead
+
+				</script>
+			</section>
+		</section>
+
+		<!-- ################################################################################################################ -->
+
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					Do we want a compiler that does not support whole scala?
+
+					<img class="fragment" src="imgs/partial-cover.png" style="max-width: 350px; background: none; border: none; margin: 15px"/>
+
+					<span class="fragment">Different enviroments!</span>
+
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					## Scala's toolbox compiler
+				</script>
+			</section>
+
+			<section data-markdown="" style="width: 900px;">
+				<script type="text/template" >
+					### compile and run scala code in runtime
+
+					```scala
+					// libraryDependencies += "org.scala-lang" % "scala-compiler" % "2.11.9"
+					def compileCode(code: String): () => Any = {
+						import scala.tools.reflect.ToolBox
+						val toolbox = reflect.runtime.currentMirror.mkToolBox()
+
+						toolbox.compile(toolbox.parse(code))
+					}
+					```
+
+				</script>
+			</section>
+
+			<section data-markdown data-separator-notes="Notes:">
+				<script type="text/template">
+					Toolbox - scalac in different universe
+
+					<img src="imgs/toolbox-cover.png" style="max-width: 350px; background: none; border: none; margin: 15px"/>
+
+					* <!-- .element: class="fragment" --> Imports handling [SI-6393](https://issues.scala-lang.org/browse/SI-6393) [SI-6393](SI-6393)
+					* <!-- .element: class="fragment" --> Positions handling [SI-8465](SI-8465)
+					* <!-- .element: class="fragment" --> Even types handling [SI-8724](SI-8724)
+					* <!-- .element: class="fragment" --> and much, [much more](https://issues.scala-lang.org/browse/SI-5748?jql=project%20%3D%20SI%20AND%20component%20%3D%20Reflection%20AND%20status%20%3D%20Open%20AND%20description%20~%20toolbox)
+
+					Notes:
+					- TODO - better drawing!
+
+					- Problems with enumeration of packages, strange nameing convention etc.
+
+					- Used e.g. in ScalaIDE expression evaluator
+
+					- alternative is scalac + tmpdir + classloading - a lot of problems
+
+				</script>
+			</section>
+		</section>
+
+		<!-- ################################################################################################################ -->
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					## New backends
+
+					Note:
+					- TODO
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### Scalajs
+
+					* [scala-js.org](http://scala-js.org)
+					* [Katrin's talk at Scala DaysBErlin 2016](https://www.youtube.com/watch?v=aqtoe0xDayM)
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### scalanative
+
+					* [scala-native.org](http://www.scala-native.org/en/latest/)
+					* [Denis Shabalin, Scala Goes Native](https://www.youtube.com/watch?v=ArWWlwQl37A)
+				</script>
+			</section>
+		</section>
+
+		<!-- ################################################################################################################ -->
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					## Incremental compilers
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					## What is incremental compiler?
+
+					>  <!-- .element: class="fragment" --> An incremental compiler is a kind of incremental computation applied to the field of compilation. <!-- .element: class="fragment" -->
+
+					Note:
+					* Is incremental compiler different compiler?
+
+					* do we have incremental compiler in scala?
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					> A compiler is incremental if it provides the programmer with a recompiled version of the program "by expending an amount of effort which is proportional to the size of the change made by the programmer."
+					>
+					> &mdash; [James Popple (1987)](https://books.google.com.ua/books?id=ETWv2rygERIC&pg=PA1&lpg=PA1&dq=Incremental+Compilation+and+its+Implementation+in+the+PECAN+Programming+Environment+Generator&source=bl&ots=CmV3ZvkQ2i&sig=FsUC2uDOampBClzEPhIsKvfNugY&hl=en&sa=X&ved=0ahUKEwjEkoH3w5HTAhVJMZoKHQ0nCWsQ6AEIGjAA#v=onepage&q=Incremental%20Compilation%20and%20its%20Implementation%20in%20the%20PECAN%20Programming%20Environment%20Generator&f=false)
+
+					Note:
+					- . Incremental Compilation and its Implementation in the PECAN Programming Environment Generator
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### Incremental compiler
+					## = <!-- .element: class="fragment" -->
+					### driver for scalac <!-- .element: class="fragment" -->
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					Incremental compiler = driver for scalac
+
+					<img src="imgs/incremental-flow.png" style="background: none; border: none; margin: 15px">
+
+					Note:
+					* TODO - add other examples - with different files changed
+
+					* Scalac can't recompile less then source
+
+					* Pants, bazel - finer grain approach - TODO read about it!
+				</script>
+			</section>
+		</section>
+
+		<!-- ################################################################################################################ -->
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					# Zinc
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### sbt incremental compiler
+
+					sbt-incremental compiler <!-- .element: class="fragment" -->
+
+					sbt-inc compiler  <!-- .element: class="fragment" -->
+
+					s-inc compiler  <!-- .element: class="fragment" -->
+
+					## zinc compiler <!-- .element: class="fragment" -->
+
+					Note:
+					* add replace
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### up to sbt 0.13.x
+
+					Placed in [sbt](https://github.com/sbt/sbt) itself and mirrored in [typsafehub/zinc](https://github.com/typesafehub/zinc)
+
+
+					### sbt 1.0.x
+					Pulled out [sbt](https://github.com/sbt/sbt) to [sbt/zinc](https://github.com/sbt/zinc)
+
+					Note:
+					* TODO some history from old repo, nailgun etc https://github.com/typesafehub/zinc/commits/master?after=1e405d820cd051610578e4b372db0b668753de6b+244
+
+					* TODO name story to remove?
+				</script>
+			</section>
+
+
+			<section data-markdown>
+				<script type="text/template">
+					### compiler bridge
+
+					<img src="imgs/zinc-onion.png" style="background: none; border: none; margin: 15px">
+
+					sbt 0.13.x is still on 2.10.x but compiles 2.12.x workspaces
+				</script>
+			</section>
+
+			<section data-markdown  data-separator-notes="Notes:">
+				<script type="text/template">
+					### zinc
+
+					<img class="current-visible" src="imgs/scala-cover.png" style="max-width: 350px; background: none; border: none; margin: 15px"/>
+					<img class="fragment current-visible" src="imgs/zinc-cover.png" style="max-width: 350px; background: none; border: none; margin: 15px"/>
+
+					Notes:
+					* new layer of possible failures
+
+					* overhead
+
+					* name hashing and plain approach
+
+					* Are you happy with it?
+
+					* Scala Meta in zinc before it was even cool :)
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### Shameless plug: Hoarder
+
+					Don’t repeat yourself when compiling!
+
+					[github.com/romanowski/hoarder](https://github.com/romanowski/hoarder)
+				</script>
+			</section>
+
+		</section>
+
+		<!-- ################################################################################################################ -->
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					## Intellij
+					## incremental compiler
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					#### Intellij incremental compiler
+
+					<img class="current-visible" src="imgs/intellij-onion.png"
+					     style=" background: none; border: none; margin: 15px"/>
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### Intellij's incremental compiler
+
+					<img src="imgs/scala-cover.png" style="max-width: 350px; background: none; border: none; margin: 15px"/>
+					<img class="fragment" src="imgs/zinc-cover.png" style="max-width: 350px; background: none; border: none; margin: 15px"/>
+
+					Note:
+					- TODO add more holes!
+
+					- macros, implicits potential usage in scala
+
+					- keep your compiler hot - even 35% faster compilation
+				</script>
+			</section>
+		</section>
+
+		<!-- ################################################################################################################ -->
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					## Presentation compiler
+
+					Note:
+					- Have you ever use presentation compiler?
+
+					- Have you ever use Intellij/ScalaIDE/Ensime? if so all of you should raise your before!
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					#### Instant typing
+
+					<img src="imgs/presentationCompilerError.png">
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					#### Code completion
+
+					<img src="imgs/codeCompletion.png">
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					#### Refactorings
+
+					<img src="imgs/refactorings.png">
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					| **compiler** | **presentation-compiler** |
+					| -- | -- |
+					| produce bytecode + errors/warnings | answer questions |
+					| should fail ASAP | should provide as much data as possible |
+					| batch mode | interactive mode |
+					| don't share any data | provide data to other tools (e.g. refactorings) |
+				</script>
+			</section>
+
+<!--			<section data-markdown>
+				<script type="text/template">
+					Is presentation compiler **a compiler**?
+
+					Note:
+					* //TODO some sources about it
+				</script>
+			</section>-->
+		</section>
+
+		<!-- ################################################################################################################ -->
+
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					## Intellij presentation compiler
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### Intellij presentation compiler
+					<img class="current-visible" src="imgs/intellij-pc-flow.png"
+					     style="background: none; border: none; margin: 15px">
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### Intellij presentation compiler
+					<img class="current-visible" src="imgs/analysis-in-progress.png"
+					     style=" background: none; border: none; margin: 15px">
+				</script>
+			</section>
+
+
+			<section data-markdown>
+				<script type="text/template">
+					| ideal presentation-compiler | scalac presentation compiler |
+					| -- | -- |
+					| answer questions | OK |
+					| should provide as much data as possible | OK (a lot if code can be parsed) |
+					| interactive mode | interactive after initial batch mode |
+					| TODO more | TODO more |
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					<img src="imgs/dogs2.jpg">
+
+					<span class="fragment">
+							<img src="imgs/jason-contribitutions.png"/>
+							<a href="">github.com/JetBrains/intellij-scala/graphs/contributors</a>
+					</span>
+
+					Note:
+					- bigger photo!
+
+					* Intellij's presentaiton compilers has Jason Zaugg in common with scalac :)
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					#### Intellij presentation compiler
+
+					<img src="imgs/intellij-pc-cover.png" style="max-width: 350px; background: none; border: none; margin: 15px"/>
+
+				</script>
+			</section>
+
+			<section>
+				<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">OH: &quot;I get this compiler error.&quot;
+					... &quot;In Intellij or in real life?&quot;</p>&mdash; Miles Sabin (@milessabin) <a
+					href="https://twitter.com/milessabin/status/841219815658393600">March 13, 2017</a></blockquote>
+
+				<div class="fragment">Macros, deeply nested implicits, strange types...</div>
+
+				<h5 class="fragment"><br>scala.meta? </h5>
+			</section>
+
+		</section>
+
+		<!-- ################################################################################################################ -->
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					## scalac
+					## presentation compiler
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					#### scalac presentation compiler
+
+					<img class="current-visible" src="imgs/scala-pc-flow.png"
+					     style="background: none; border: none; margin: 15px"/>
+
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					| ideal | scalac |
+					| -- | -- |
+					| answer questions | OK |
+					| should provide as much data as possible | all or none |
+					| interactive mode | interactive after initial batch mode |
+					| provide data to other tools | data are provided as pieces of code evaluated in compiler context |
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### scalac presentation compiler
+
+					<img class="current-visible" src="imgs/scala-cover.png" style="max-width: 350px; background: none; border: none; margin: 15px"/>
+					<img class="fragment current-visible" src="imgs/scalac-pc-cover.png" style="max-width: 350px; background: none; border: none; margin: 15px"/>
+
+					Note:
+					- used in ScalaIDE and ensime
+
+					- ensime: try to do as much as possible without it
+
+					- full support for macros and other crazy stuff
+				</script>
+			</section>
+
+			<section>
+				<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">OH: &quot;I get this compiler error.&quot;
+					... &quot;In Intellij or in real life?&quot;</p>&mdash; Miles Sabin (@milessabin) <a
+						href="https://twitter.com/milessabin/status/841219815658393600">March 13, 2017</a></blockquote>
+				<script async src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
+			</section>
+		</section>
+
+
+		<!-- ################################################################################################################ -->
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					### more?
+				</script>
+			</section>
+
+
+
+			<section data-markdown>
+				<script type="text/template">
+					#### Kentucky mule
+
+					[github.com/gkossakowski/kentuckymule](https://github.com/gkossakowski/kentuckymule) <!-- .element: class="fragment" -->
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### Macro paradise
+
+					> I have always imagined that paradise will be a kind of library.
+					>
+					> Jorge Luis Borges, “Poem of the Gifts”
+
+					Note:
+					- TODO better hyphen
+
+					- TODO read about it
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					## Compiler plugins
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					## Macros
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					## DSLs
+				</script>
+			</section>
+
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				### HOW MANY SCALA COMPILER
+				#### IS OUT THERE?
+
+				* <!-- .element: class="fragment" --> scalac
+				* <!-- .element: class="fragment" --> dotty
+				* <!-- .element: class="fragment" --> intellij presentation compiler
+			</script>
+		</section>
+
+		<!-- ################################################################################################################ -->
+
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					### Krzysztof Romanowski
+
+					romanowski.kr@gmail.com
+
+					<div style="margin-left: 36% text-align: left;">
+						<img src="imgs/gh.png" style="background: none; border: none; margin: 0px"> romanowski
+						<br/>
+						<img src="imgs/twitter.png" style="background: none; border: none; margin: 0px"> RomanowskiKr
+
+					</div>
+
+					<img src="imgs/vl.png" alt="Virtus Lab" style="background: none; border: none; box-shadow: none"/>
+				</script>
+			</section>
+		</section>
+
+		<!-- ################################################################################################################ -->
+
+		<!-- ################################################################################################################ -->
+
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					# Presentation compiler hints!
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					# Incremental compiler hints!
+				</script>
+			</section>
+		</section>
+
+	</div>
+
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+
+
+</script>
+</body>
+</html>

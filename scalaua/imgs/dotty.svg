@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 744.09448819 1052.3622047"
+   id="svg4154"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="dotty.svg">
+  <defs
+     id="defs4156" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.41238595"
+     inkscape:cx="835.64174"
+     inkscape:cy="515.66864"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1050"
+     inkscape:window-x="0"
+     inkscape:window-y="30"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4159">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       sodipodi:type="spiral"
+       style="fill:#ff8080;fill-rule:evenodd;stroke:none;stroke-width:25.20000076;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path4702-3"
+       sodipodi:cx="142.85715"
+       sodipodi:cy="240.93364"
+       sodipodi:expansion="0.039999999"
+       sodipodi:revolution="3.0599954"
+       sodipodi:radius="430.28864"
+       sodipodi:argument="-21.497208"
+       sodipodi:t0="0.67299998"
+       d="M -131.20844,-81.963644 C 44.6963,-232.20433 317.16032,-210.22347 467.23766,-34.39087 618.06645,142.32216 595.95953,415.96326 419.31597,566.65057 241.87495,718.01816 -32.833309,695.79947 -184.0763,518.42501 -335.94095,340.32148 -313.62196,64.636925 -135.58207,-87.116538 c 0.42425,-0.36161 0.8492,-0.722396 1.27485,-1.082355"
+       transform="matrix(1.1135027,0.35212293,-0.71644169,0.65066219,430.17803,129.59257)" />
+    <path
+       sodipodi:type="spiral"
+       style="fill:none;fill-rule:evenodd;stroke:#f40000;stroke-width:25.20000076;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path4702"
+       sodipodi:cx="142.85715"
+       sodipodi:cy="240.93364"
+       sodipodi:expansion="0.38"
+       sodipodi:revolution="3.0599954"
+       sodipodi:radius="430.28864"
+       sodipodi:argument="-21.497208"
+       sodipodi:t0="0.65810579"
+       d="M -164.02582,39.586939 C -56.594061,-135.39118 179.9168,-187.18584 353.35941,-79.903791 535.3944,32.693034 589.12145,279.34387 476.72318,459.984 359.32434,648.66075 103.16587,704.21501 -84.229086,587.04756 -279.19008,465.1495 -336.4799,200.0228 -214.83552,6.2505632 c 22.07952,-35.1713582 49.2991,-67.0783852 80.5283,-94.4494562"
+       transform="matrix(0.52137814,0.71201432,-0.764784,0.21751198,550.61992,278.5611)" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot4144"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="matrix(1.4029647,0,0,1.7049841,-22.122295,-82.641992)"><flowRegion
+         id="flowRegion4146"><rect
+           id="rect4148"
+           width="180"
+           height="61.42857"
+           x="198.57143"
+           y="115.21935"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';fill:#000000" /></flowRegion><flowPara
+         id="flowPara4150"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold';fill:#000000;fill-opacity:1">Scala</flowPara></flowRoot>  </g>
+</svg>
