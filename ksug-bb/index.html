@@ -1,0 +1,938 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Incremental Compiler: taming Scalac</title>
+	<meta name="description" content="What is and how works incremental compiler in sbt world">
+	<meta name="author" content="Krzysztof Romanowski">
+
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+	<meta name="viewport"
+	      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+	<link href="https://fonts.googleapis.com/css?family=Frijole" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono" rel="stylesheet">
+
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+	<!-- Code syntax highlighting -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<style type="text/css">
+		.lefty {
+		text-align: left;
+		font-size: 65% !important;
+		margin-left: 5%  !important;
+		}
+
+		.marked {
+			color: #bf3c3c !important;
+		}
+		.marked2 {
+			color: #42affa !important;
+		}
+
+		.bigger {
+				font-size: 130% !important;
+		}
+
+		.small {
+				font-size: 40% !important;
+		}
+
+		img {
+			background: none;
+			border: none;
+			box-shadow: none"
+		}
+
+		.monads {
+			z-index: -5;
+			position: fixed;
+			top: -10%;
+			left: -10%;
+			width: 200px;
+		}
+
+		html, body, #tv {
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	height: 100%;
+}
+
+#tv {
+	position: absolute;
+	top: 0;
+	left: 0;
+	-webkit-transform: translate3d(0, 0, 0);
+	-moz-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+	-webkit-backface-visibility: hidden;
+	-webkit-perspective: 1000;
+}
+	</style>
+
+	<!-- Printing and PDF exports -->
+	<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+
+
+	</script>
+
+	<!--[if lt IE 9]>
+	<script src="lib/js/html5shiv.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+
+<img src="imgs/vl.png" alt="Virtus Lab"
+     style="background: none; border: none; box-shadow: none; position: absolute; bottom:10%; right: 10%;"/>
+
+<!--<canvas id="tv"></canvas>-->
+
+<div class="reveal">
+
+	<!-- Any section element inside of this container is displayed as a slide -->
+	<div class="slides">
+
+		<section data-markdown>
+			<script type="text/template">
+				### Krzysztof Romanowski
+
+				romanowski.kr@gmail.com
+
+				<div style="margin-left: 36% text-align: left;">
+					<img src="imgs/gh.png" style="margin: 0px"> romanowski
+					<br/>
+					<img src="imgs/twitter.png" style="margin: 0px"> `RomanowskiKr`
+
+				</div>
+
+				<img src="imgs/vl.png" alt="Virtus Lab" style="box-shadow: none"/>
+			</script>
+		</section>
+
+
+		<section data-markdown>
+			<script type="text/template">
+				### Who am I?
+
+				* 6 years in <span class="marked">Scala</span>
+				* Tooling for scala huge <span class="marked2">monorepo</span>:
+					* over <span class="marked">2 MLOC</span>
+					* over 200 devs, <span class="marked">30 PRs/day</span>
+					* compilation over <span class="marked2">40 mins<span class="marked">
+				* <span class="marked">github</span>.com/romanowski/<span class="marked">hoarder</span>
+			</script>
+		</section>
+
+
+		<section data-markdown>
+			<script type="text/template">
+				<img src="imgs/vl.png" alt="Virtus Lab">
+
+				<span class="marked">Scala</span> company
+			</script>
+			<!--TODO more!-->
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				Slides:
+
+				<a href="http://romanowski.github.io/ksug-bb" class="marked">romanowski.github.io/ksug-bb</a>
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				# Pros of <span class="marked">Scala</span>
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				# <span class="marked">Scala!</span>
+				## Yes, but <span class="marked">why?</span>
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				# <span class="marked">$$$</span>
+				<img src="imgs/scala-salary.png" style="max-width: 60%;"/>
+				<span class="small">http://stackoverflow.com/research/developer-survey-2016</span>
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+			>	`If I were to pick a` <span class="marked">language</span> `today other than` Java, `it would be` <span class="marked">Scala</span>.
+
+			James Gosling, `father of` <span class="marked">Java</span>
+
+
+			</script>
+			<!--TODO pic? formatting-->
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				> `I can honestly say if someone had shown me the` <span class="marked">Programming Scala book</span> `by` Martin Odersky, Lex Spoon & Bill Venners `back in 2003 I'd probably have` never created <span class="marked">Groovy</span>.
+
+				James Strachan, `creator of` <span class="marked">Groovy</span>
+
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				## Disclaimer
+
+				I do not and shall not <span class="marked2">discriminate</span> any future, style of programming, naming convection, <span class="marked">formatting</span> or lack of thereof.
+
+				<span class="marked">Scala</span> and its <span class="marked">ecosystem</span> provides equal <span class="marked2">opportunities</span> without regard of used indentation form, operating system, editor or IDEs.
+
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				## Disclaimer
+
+				All presented features/problems are picked by <span class="marked2">author</span> and do not represent <span class="marked">Scala community</span> as whole.
+
+				Regardless of crap above, please format <span class="marked2">your code</span>.
+
+				Coding on Windows is always harder.
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				<span class="marked bigger">Scala</span> (bottom-up):
+
+
+				* Syntax tricks
+				* Types
+				* Functions
+				* <del><span class="marked bigger">Monads</span></del>
+				* Design principles
+				* Problems
+				* Ecosystem
+
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				<span class="marked bigger">Monads</span> ???
+
+				<img src="imgs/alpaca.png">
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+			Scala is <span class="marked bigger">designed</span>
+
+			less <span class="marked2">special</span> cases,
+			more <span class="marked2">generic</span> mechanisms
+
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				### <a href="https://scastie.scala-lang.org" class="marked">scastie.scala-lang.org</a>
+
+				Try it as we speak
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				Syntax tricks: <span class="marked">naming</span>
+
+				```scala
+				case class Vector(params: Seq[Int]) {
+				  // operator is just a method named `*`
+					def *(a: Int) = Vector((params map (_ * a)):_*)
+					def `And we can be even crazier!` = "madness"
+				}
+
+				Vector(1, 2, 3) * 3
+				Vector(1).`And we can be even crazier!`
+				```
+
+			</script>
+		</section>
+
+
+
+		<section data-markdown>
+			<script type="text/template">
+				Syntax tricks: everything <span class="marked bigger">returns</span>&nbsp;a&nbsp;value
+
+				```scala
+				// for ... yield loop and if return value
+				def abs(a: Int) = if(a < 0) -a else a
+				val sqrts = for(i <- Seq(1, 2, 3)) yield i * i
+				```
+
+				```scala
+				// blocks return value and can define val/vars/def
+				val a = {
+				  val b = 3
+					def sqrt(v: Int) = v * v
+					sqrt(b)
+				}
+
+				// single expression don't need to be wrapped in {}
+				if (isFriday) goForBeer() else {
+					doALotOfWork()
+					multipleTimes()
+				}
+				```
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				Sidenote<span/>: <span class="marked bigger">DSLs</span>
+
+				<a class="marked2" href="https://github.com/fogus/baysick">BAYSICK</a> - supset of BASIC implemented as Scala <span class="marked">DSL</span>
+
+				```
+				// This compiles and run!
+				object SquareRoot extends Baysick with App {
+					10 PRINT "Enter a number"
+					20 INPUT 'n
+					30 PRINT "Square root of " % "'n is " % SQRT('n)
+					40 END
+
+					RUN
+				}
+				```
+				<img src="imgs/alpaca.png" class="monads">
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				Syntax tricks: <span class="marked">imports</span>&nbsp;everywhere
+
+				```scala
+				val immutable = Set(1, 2, 3) // good default in Scala
+
+				if (unsafeOperation){
+					import collection.mutable.Set
+					val mutable = Set(1, 2, 3)
+				}
+
+				val immutableAgain = Set(1, 2, 3) // good default in Scala
+
+				```
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				Nesting
+
+				```scala
+				object A {
+				 val b = {
+					def c()={
+					 object D {
+					  trait E {
+						 val F = {
+							def G() = {
+							 class H {}
+							  "too deep!"
+					   }}}
+					  B
+					 }
+					c()
+}}
+
+				```
+
+				<img src="imgs/alpaca.png" class="monads">
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				## String <span class="marked">interpolation</span>
+
+				```scala
+				val localVal = "localVal"
+
+				s"I will be filled with $localVal or even block ${
+					"Any scala code can goes here!"
+				}"
+				```
+
+				Not a <span class="marked2">special</span> case
+
+				```
+				implicit class JsonInterpolator(val sc: StringContext) {
+					def json(args: Any*): Json  = ???
+				}
+				val json = json"""{"a": $localVal}""" // will return json
+
+				```
+
+				<img src="imgs/alpaca.png" class="monads">
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				Scala and <span class="marked">OOO</span> still&nbsp;better&nbsp;then&nbsp;Java.
+
+				```scala
+				trait Foo1 { def foo() = 1 }
+
+				trait Foo2 { def foo() = 2 }
+
+				class Bar extends Foo1 with Foo2 {
+					foo() // 1 or 2 or does not compile?
+				}
+
+				```
+
+
+				```scala
+				trait Output { def println(msg: String) = ??? }
+				object StdOutput extends Output
+
+				val msg = "We can use inheritance static methods!"
+				StdOutput.println(msg)
+
+				```
+			</script>
+			<!--//TODO monad-hiding - fix it?-->
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				## <span class="marked">case class</span>
+
+
+				```scala
+				case class Point(a: Int, b: Int)
+
+				// equals and hashCode, factory method...
+				new Point(1,2) == Point(1,2) // true
+
+				// ... copy method and fancy toString are generated for you
+				println(Point(1,2).copy(b = 3)) // prints 'Point(1, 3)'
+
+				```
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				### pattern <span class="marked">match</span>ing
+
+
+				```scala
+				case class Point(a: Int, b: Int)
+
+				def myFavouritePoints(p: Point) = p match {
+					case point if isInteresting(point) =>
+						true // We can create guards
+					case Point(0, _) =>
+						true // We can match specific values
+					case Point(x, 0) if x > 0 =>
+						true // we can extract specific value
+					case other @ Point(x, y) if iWantToPrint(x, y) =>
+						true // We can always mix it all together
+					case _ =>
+						false // Default case
+				}
+				```
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				### Pattern <span class="marked">match</span>ing
+				Not&nbsp;a&nbsp;<span class="marked2">special</span>&nbsp;case!
+
+				```
+				object OnYAxis {
+					def unapply(p: Point): Option[Int] =
+						if(p.y == 0) Some(p.x) else None
+				}
+				def doSomething(p: Point) = p match {
+					case OnYAxis(x) => x
+				}
+
+				// or even
+				val OnYAxis(x) = Point(4, 0)
+
+				```
+
+				<img src="imgs/alpaca.png" class="monads">
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				Live example.
+
+				How can I return <span class="marked2">2 values</span> from a <span class="marked">function</span>?
+
+				```scala
+				val (a, b) = { // This is syntactic sugar for `Tuple2(a, b)`
+					val a = costlyOperation()
+					val b = costlyOperationOnA(a)
+					(a, b) // This is syntactic sugar for `Tuple2(a, b)`
+				}
+				```
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				<span class="marked">Functions</span> <span class="bigger">></span> <span class="marked2">Lambdas</span>
+
+				```scala
+				val addOne: Int => Int =
+					(a: Int) => a + 1 // definition
+
+
+				val addAny: Int => Int => Int =
+				(a: Int) => (b: Int) => a + b // definition
+
+				def subtractAny(a: Int, b: Int) = a - b
+
+				val addTwo = addAny(2) // Int => Int
+				val removeTwo = subtractAny(2) // Int => Int
+				```
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				Types: <span class="marked">Definitions</span>
+
+				```scala
+				type IntMatrix = Array[Array[Int]]
+				type Matrix[Type] = Array[Array[Type]]
+				type NumericMatrix[Type <: Numeric] = Array[Array[Type]]
+
+				def twice[A](matrix: NumericMatrix[A]): NumericMatrix[A] =
+				 for {
+					row <- matrix
+					elem <- row
+				} yield row * 2
+
+				```
+
+				<img src="imgs/alpaca.png" class="monads">
+
+			</script>
+			<!--//TODO monad-hiding-->
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				Types:  <span class="marked">Variance</span>
+
+				```scala
+				class Animal
+				class Dog extends Animal
+
+				class Food[For+]
+				def test(food: Food[Animal]) = ???
+
+				test(new Food[Dog]) //try to implement this is Java
+
+				class Function[Param-, Return+]
+				def stringify(function: Function[Animal, CharSeq]) = ???
+
+				stringify(new Function[Any, String])
+				stringify(new Function[Animal, CharSequence])
+
+				stringify(new Function[Dog, CharSequence]) // won't compile
+				stringify(new Function[Animal, Any]) // won't compile
+				```
+				<img src="imgs/alpaca.png" class="monads">
+			</script>
+			<!--//TODO monad-hiding-->
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				<span class="marked">Implicits</span> and  <span class="marked2">Typeclasses</span>
+				```scala
+				val ordering: Ordering[String = ???
+				def sort1[A](col: Seq[A], ord: Ordering[A]) = ???
+
+				sort1(Seq("a", "b"), ordering)
+				```
+
+				```scala
+				// or better
+				def sort2[A](col: Seq[A])(implicit ord: Ordering[A]) = ???
+
+				import ImplicitOrderings._
+				sort2(Seq("a", "b"))
+				```
+
+				```scala
+				def sort3[A: Ordering](col: Seq[A]) = ???
+
+				import ImplicitOrderings._
+				sort3(Seq("a", "b"))
+				```
+
+				<img src="imgs/alpaca.png" class="monads">
+			</script>
+
+
+			<!--//TODO monad-hiding-->
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				## <span class="marked">Immutability</span>
+
+				* `val` over `var`
+				* `collection` <span class="marked">immutable</span> `by default`
+				* `no side effects in` APIs
+
+				`sbt codebase`: 7694 `vals vs` 127 `vars`
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				## Collections
+
+				```scala
+				Vector("Foo", "Bar", "Baz").map(_.drop(1)) // returns Vector
+				Set("Foo", "Bar", "Baz").map(_.drop(1)) // returns Set
+
+				Seq(1, 2, 3).sum // will compile
+				Seq("a", "b").sum // will not compile
+				```
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				## Futures
+
+				```scala
+				val result = Future(longRunningOperation)
+				println(result.isCompile) // Not yet..
+
+				val secondResult = result.map(r => longRunningOperationOnResult(r))
+
+				Await(secondResult, 2 minutes) // This will produce result
+				```
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				#### Advanced (and <span class=marked>scary</span>) Scala
+
+				* <span class=marked>Type</span> level programming
+				* hardcode <span class=marked>FP</span> (Category Theory)
+				* Macros and <span class=marked>meta</span> programming
+
+				<img src="imgs/alpaca.png">
+				<img src="imgs/alpaca.png">
+				<img src="imgs/alpaca.png">
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				Scala runs on:
+
+				<span class="marked">JVM</span>, <span class="marked2">Javascript</span> and native (<span class="marked">llvm</span>).
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				### Scala. <span class="marked">Complains.</span>
+
+				- Lack of <span class="marked2">tooling</span> (not anymore?)
+				- <span class="marked2">Compiler</span> speed
+				- Easy to write rubbish code
+				- Hard to understand scala code
+				- Too many <span class="marked">implicit</span>s
+				- <span class="marked">Binary</span> compatibility
+				- <del><span class="marked">Monads</span></del>
+
+				<img src="imgs/alpaca.png" class="monads">
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template" class="smaller-list">
+				## IDEs:
+
+				<span class="marked">Intellij</span> / Eclipse <span class="small">(ScalaIDE)</span> /
+				<span class="marked2">Ensime</span>&nbsp;<span class="small">(Emacs&nbsp;VSCode,&nbsp;VIM,&nbsp;sublime)</span>
+
+				<br>
+
+				## Build tools:
+
+				<span class="marked">SBT</span> / Gradle / <span class="marked2">Pants</span> / Maven
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				## Main Frame<span class="marked">work</span>s
+				and other fascinating libs
+
+				* <span class="marked">Spark</span> - <del>Big</del><span class="marked2">Fast</span> Data
+				* <span class="marked">Akka</span> - super fast concurrency
+				* Web: <span class="marked">Play</span>, Spray, Finatra
+				* Cats/scalaz (<span class="marked2">monad</span>s alert!)
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				## Spark
+			</script>
+		</section>
+		<section data-markdown>
+			<script type="text/template">
+				Spark Slide: TODO
+			</script>
+		</section>
+
+
+		<section data-markdown>
+			<script type="text/template">
+				## Akka
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				Actor model slide: TODO
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				Akka slide 2: TODO
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				Reactive streams + jdk9: TODO
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				## <span class="marked">Play</span>
+
+				full stack, web framework
+
+				* Java/Scala apis
+				* <span class="marked">stateless</span>, non-<span class="marked2">block</span>ing
+				* Integration with less, coffescript, Akka
+				* Modern: JSON, websocets, evensource, commet
+				* No<span class="marked">SQL</span> and Big Data support
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				#### <span class="marked">Functional</span> Programing
+
+				Scalaz/Cats
+
+
+				TODO some crazy FP code
+
+				<img src="imgs/alpaca.png" class="monads">
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				### Tip of the iceberg:
+
+				* Shapless
+				* ... (other creazy and nice stuff)
+
+
+				<img src="imgs/alpaca.png" class="monads">
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				<span class="marked">Functional</span>Programing
+
+				Scalaz/Cats
+
+				TODO some crazy FP code
+
+				<img src="imgs/alpaca.png" class="monads">
+			</script>
+		</section>
+
+		<!-- ################################################################################################################ -->
+	</div>
+
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+
+			// The full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+
+
+
+
+		(function() {
+	"use strict";
+
+	var canvas = document.querySelector("#tv"),
+		context = canvas.getContext("2d"),
+		scaleFactor = 2.5, // Noise size
+		samples = [],
+		sampleIndex = 0,
+		scanOffsetY = 0,
+		scanSize = 0,
+		FPS = 60,
+		scanSpeed = FPS * 15, // 15 seconds from top to bottom
+		SAMPLE_COUNT = 10;
+
+	window.onresize = function() {
+		canvas.width = canvas.offsetWidth / scaleFactor;
+		canvas.height = canvas.width / (canvas.offsetWidth / canvas.offsetHeight);
+		scanSize = (canvas.offsetHeight / scaleFactor) / 3;
+
+		samples = []
+		for(var i = 0; i < SAMPLE_COUNT; i++)
+			samples.push(generateRandomSample(context, canvas.width, canvas.height));
+	};
+
+	function interpolate(x, x0, y0, x1, y1) {
+		return y0 + (y1 - y0)*((x - x0)/(x1 - x0));
+	}
+
+
+	function generateRandomSample(context, w, h) {
+		var intensity = [];
+		var random = 0;
+		var factor = h / 50;
+
+		var intensityCurve = [];
+		for(var i = 0; i < Math.floor(h / factor) + factor; i++)
+			intensityCurve.push(Math.floor(Math.random() * 15));
+
+		for(var i = 0; i < h; i++) {
+			var value = interpolate((i/factor), Math.floor(i / factor), intensityCurve[Math.floor(i / factor)], Math.floor(i / factor) + 1, intensityCurve[Math.floor(i / factor) + 1]);
+			intensity.push(value);
+		}
+
+		var imageData = context.createImageData(w, h);
+		for(var i = 0; i < (w * h); i++) {
+			var k = i * 4;
+			var color = Math.floor(36 * Math.random());
+			// Optional: add an intensity curve to try to simulate scan lines
+			color += intensity[Math.floor(i / w)];
+			imageData.data[k] = imageData.data[k + 1] = imageData.data[k + 2] = color;
+			imageData.data[k + 3] = 255;
+		}
+		return imageData;
+	}
+
+	function render() {
+		context.putImageData(samples[Math.floor(sampleIndex)], 0, 0);
+
+		sampleIndex += 30 / FPS; // 1/FPS == 1 second
+		if(sampleIndex >= samples.length) sampleIndex = 0;
+
+		var grd = context.createLinearGradient(0, scanOffsetY, 0, scanSize + scanOffsetY);
+
+		grd.addColorStop(0, 'rgba(255,255,255,0)');
+		grd.addColorStop(0.1, 'rgba(255,255,255,0)');
+		grd.addColorStop(0.2, 'rgba(255,255,255,0.2)');
+		grd.addColorStop(0.3, 'rgba(255,255,255,0.0)');
+		grd.addColorStop(0.45, 'rgba(255,255,255,0.1)');
+		//grd.addColorStop(0.5, 'rgba(255,255,255,1.0)');
+		//grd.addColorStop(0.55, 'rgba(255,255,255,0.55)');
+		//grd.addColorStop(0.6, 'rgba(255,255,255,0.25)');
+		//grd.addColorStop(0.8, 'rgba(255,255,255,0.15)');
+		grd.addColorStop(1, 'rgba(255,255,255,0)');
+
+		context.fillStyle = grd;
+		context.fillRect(0, scanOffsetY, canvas.width, scanSize + scanOffsetY);
+		context.globalCompositeOperation = "lighter";
+
+		//scanOffsetY += (canvas.height / scanSpeed);
+		if(scanOffsetY > canvas.height) scanOffsetY = -(scanSize / 2);
+
+		window.setTimeout(function() {
+			window.requestAnimationFrame(render);
+		}, 1000 / FPS);
+	}
+	window.onresize();
+	window.requestAnimationFrame(render);
+})();
+
+
+
+
+
+
+
+</script>
+
+</body>
+</html>
