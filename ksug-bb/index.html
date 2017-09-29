@@ -118,7 +118,6 @@
 					<img src="imgs/twitter.png" style="margin: 0px"> `RomanowskiKr`
 
 				</div>
-
 				<img src="imgs/vl.png" alt="Virtus Lab" style="box-shadow: none"/>
 			</script>
 		</section>
@@ -138,13 +137,14 @@
 		</section>
 
 
-		<section data-markdown>
-			<script type="text/template">
-				<img src="imgs/vl.png" alt="Virtus Lab">
+		<section data-markdown data-background-image="imgs/vl-tech.png" data-background-size=cover>
+			<script type="text/template" >
+				<img src="imgs/vl.png" alt="Virtus Lab" style="margin-left: 380px;
+    width: 350px;
+    margin-top: -100px;
+		">
 
-				<span class="marked">Scala</span> company
 			</script>
-			<!--TODO more!-->
 		</section>
 
 		<section data-markdown>
@@ -184,7 +184,6 @@
 
 
 			</script>
-			<!--TODO pic? formatting-->
 		</section>
 
 		<section data-markdown>
@@ -266,7 +265,7 @@
 				Syntax tricks: <span class="marked">naming</span>
 
 				```scala
-				case class Vector(params: Seq[Int]) {
+				case class Vector(params: Int*) {
 				  // operator is just a method named `*`
 					def *(a: Int) = Vector((params map (_ * a)):_*)
 					def `And we can be even crazier!` = "madness"
@@ -300,9 +299,9 @@
 				}
 
 				// you can ommit `{}` for single expression
-				if (isFriday) goForBeer() else {
-					doALotOfWork()
-					multipleTimes()
+				if (isFriday()) grabBeer() else {
+				  doALotOfWork()
+				  grabCoffee()
 				}
 				```
 			</script>
@@ -362,11 +361,10 @@
 							 class H {}
 							  "too deep!"
 					   }}}
-					  B
-					 }
-					c()
+					  D
+					}}
+				 c()
 }}
-
 				```
 
 				<img src="imgs/alpaca.png" class="monads">
@@ -424,7 +422,6 @@
 
 				```
 			</script>
-			<!--//TODO monad-hiding - fix it?-->
 		</section>
 
 		<section data-markdown>
@@ -520,7 +517,7 @@
 				val addAny: Int => Int => Int =
 				(a: Int) => (b: Int) => a + b // definition
 
-				def subtractAny(a: Int, b: Int) = a - b
+				def subtractAny(a: Int)(b: Int) = a - b
 
 				val addTwo = addAny(2) // Int => Int
 				val removeTwo = subtractAny(2) // Int => Int
@@ -535,7 +532,7 @@
 				```scala
 				type IntMatrix = Array[Array[Int]]
 				type Matrix[Type] = Array[Array[Type]]
-				type NumericMatrix[Type <: Numeric] = Array[Array[Type]]
+				type NumericMatrix[Type <: Numeric[Type]] = Array[Array[Type]]
 
 				def twice[A](matrix: NumericMatrix[A]): NumericMatrix[A] =
 				 for {
@@ -548,7 +545,6 @@
 				<img src="imgs/alpaca.png" class="monads">
 
 			</script>
-			<!--//TODO monad-hiding-->
 		</section>
 
 		<section data-markdown>
@@ -556,33 +552,32 @@
 				Types:  <span class="marked">Variance</span>
 
 				```scala
-				class Animal
-				class Dog extends Animal
+class Animal
+class Dog extends Animal
 
-				class Food[For+]
-				def test(food: Food[Animal]) = ???
+class Food[+For]
+def test(food: Food[Animal]) = ???
 
-				test(new Food[Dog]) //try to implement this is Java
+test(new Food[Dog]) //try to implement this is Java
 
-				class Function[Param-, Return+]
-				def stringify(function: Function[Animal, CharSeq]) = ???
+class Function[-Param, +Return]
+def stringify(function: Function[Animal, CharSequence]) = ???
 
-				stringify(new Function[Any, String])
-				stringify(new Function[Animal, CharSequence])
+stringify(new Function[Any, String])
+stringify(new Function[Animal, CharSequence])
 
-				stringify(new Function[Dog, CharSequence]) // won't compile
-				stringify(new Function[Animal, Any]) // won't compile
+stringify(new Function[Dog, CharSequence]) // won't compile
+stringify(new Function[Animal, Any]) // won't compile
 				```
 				<img src="imgs/alpaca.png" class="monads">
 			</script>
-			<!--//TODO monad-hiding-->
 		</section>
 
 		<section data-markdown>
 			<script type="text/template">
 				<span class="marked">Implicits</span> and  <span class="marked2">Typeclasses</span>
 				```scala
-				val ordering: Ordering[String = ???
+				val ordering: Ordering[String] = ???
 				def sort1[A](col: Seq[A], ord: Ordering[A]) = ???
 
 				sort1(Seq("a", "b"), ordering)
@@ -605,9 +600,6 @@
 
 				<img src="imgs/alpaca.png" class="monads">
 			</script>
-
-
-			<!--//TODO monad-hiding-->
 		</section>
 
 		<section data-markdown>
@@ -642,11 +634,11 @@
 
 				```scala
 				val result = Future(longRunningOperation)
-				println(result.isCompile) // Not yet..
+				println(result.isCompile) // Not yet...
 
 				val secondResult = result.map(r => longRunningOperationOnResult(r))
 
-				Await(secondResult, 2 minutes) // This will produce result
+				Await(secondResult, 2.minutes) // This will produce result
 				```
 			</script>
 		</section>
@@ -718,37 +710,33 @@
 
 		<section data-markdown>
 			<script type="text/template">
-				## Spark
-			</script>
-		</section>
-		<section data-markdown>
-			<script type="text/template">
-				Spark Slide: TODO
+				<img src="imgs/spark-logo.png">
+
+				<img src="imgs/spark-runs.jpg">
 			</script>
 		</section>
 
 
 		<section data-markdown>
 			<script type="text/template">
-				## Akka
+				<img src="imgs/akka-logo.png"/>
 			</script>
 		</section>
 
 		<section data-markdown>
 			<script type="text/template">
-				Actor model slide: TODO
+				<span class=marked>Actor</span>s:
+
+				* sent and <span class=marked>react</span>s on messages
+				* create new actors
+				* let`it`crash`.com`
+				* only one message processed at time
 			</script>
 		</section>
 
 		<section data-markdown>
 			<script type="text/template">
-				Akka slide 2: TODO
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
-				Reactive streams + jdk9: TODO
+				<span class=marked>React</span>ive streams, jdk9 and <span class=marked>akka</span> streams
 			</script>
 		</section>
 
@@ -772,34 +760,34 @@
 
 				Scalaz/Cats
 
-
-				TODO some crazy FP code
-
 				<img src="imgs/alpaca.png" class="monads">
 			</script>
 		</section>
 
 		<section data-markdown>
 			<script type="text/template">
-				### Tip of the iceberg:
-
-				* Shapless
-				* ... (other creazy and nice stuff)
-
-
-				<img src="imgs/alpaca.png" class="monads">
+				* Shapeless (type&nbsp;level&nbsp;programming)
+				* Monix (asycnhronus&nbsp;event&nbsp;programming)
+				* http4s (http)
+				* spire (math)
+				* splick/doobie (sql)
 			</script>
 		</section>
 
 		<section data-markdown>
 			<script type="text/template">
-				<span class="marked">Functional</span>Programing
+				### Krzysztof Romanowski
 
-				Scalaz/Cats
+				romanowski.kr@gmail.com
 
-				TODO some crazy FP code
+				<div style="margin-left: 36% text-align: left;">
+					<img src="imgs/gh.png" style="margin: 0px"> romanowski
+					<br/>
+					<img src="imgs/twitter.png" style="margin: 0px"> `RomanowskiKr`
 
-				<img src="imgs/alpaca.png" class="monads">
+				</div>
+
+				<img src="imgs/vl.png" alt="Virtus Lab" style="box-shadow: none"/>
 			</script>
 		</section>
 
@@ -833,10 +821,6 @@
 					{ src: 'plugin/notes/notes.js', async: true }
 				]
 			});
-
-
-
-
 
 		(function() {
 	"use strict";
