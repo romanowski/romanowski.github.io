@@ -157,12 +157,6 @@
 
 		<section data-markdown>
 			<script type="text/template">
-				# Pros of <span class="marked">Scala</span>
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
 				# <span class="marked">Scala!</span>
 				## Yes, but <span class="marked">why?</span>
 			</script>
@@ -170,9 +164,16 @@
 
 		<section data-markdown>
 			<script type="text/template">
-				# <span class="marked">$$$</span>
 				<img src="imgs/scala-salary.png" style="max-width: 60%;"/>
 				<span class="small">http://stackoverflow.com/research/developer-survey-2016</span>
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				<img src="imgs/orely-salary.png" style="max-width: 60%;"/>
+				<br>				
+				<span class="small">https://www.oreilly.com/ideas/2017-software-development-salary-survey</span>
 			</script>
 		</section>
 
@@ -218,27 +219,165 @@
 			</script>
 		</section>
 
+
 		<section data-markdown>
 			<script type="text/template">
-				<span class="marked bigger">Scala</span> (bottom-up):
+			<span class="marked">Scala</span>
+			```scala
+			val uris = new File("resources").listFiles.map(_.toURI)
+			```
+
+			Before <span class="marked2">Java 8</span>
+			```java
+			List<URI> urlsList = new ArrayList<>();
+      for (File resource : new File("resources").listFiles()) {
+        urlsList.add(resource.toURI());
+      }
+			URI[] uris = urlsList.toArray(new URI[urlsList.size()]);
+			// This will also compile...
+			URL[] urls = urlsList.toArray(new URL[urlsList.size()]);
+			```
+			</script>
+		</section>
 
 
-				* Syntax tricks
-				* Types
-				* Functions
-				* <del><span class="marked bigger">Monads</span></del>
-				* Design principles
-				* Problems
-				* Ecosystem
-
+	<section data-markdown>
+			<script type="text/template">
+				```scala
+				trait CallableExecutor extends Executor {
+					def execute(task: Callable[_]): Unit = execute(new Runnable {
+						override def run(): Unit = task.call()
+					})
+				}
+				
+				val executor = new ForkJoinPool() with CallableExecutor
+				val threadPool = new ScheduledThreadPoolExecutor(4) with LoggingExecutor				
+				```
+			
+				
+				```java
+				public interface CallableExecutor extends Executor {
+					public void execute(Callable<?> operation);
+				}
+				class LoggingFJP extends ForkJoinPool implements CallableExecutor {
+					@Override
+					public void execute(Callable<?> operation) {
+						execute(new Runnable() {
+							@Override
+							public void run() { operation.call(); } // Exceptions?
+						});
+					}
+				}
+				LoggingExecutor forkJoin = new LoggingFJP();
+				// And the same for ScheduledThreadPoolExecutor... 				
+				```
 			</script>
 		</section>
 
 		<section data-markdown>
 			<script type="text/template">
-				<span class="marked bigger">Monads</span> ???
+				<span class="marked">Scala</span> vs. <span class="marked2">Java 8</span>
+			</script>
+		</section>
 
-				<img src="imgs/alpaca.png">
+		<section data-markdown>
+			<script type="text/template">
+				<span class="marked">Scala</span>
+				```scala
+				val uris = new File("resources").listFiles.map(_.toURI)
+				```
+				
+				<span class="marked2">Java 8</span>
+				```java
+				URI[] uris = Arrays.stream(new File("resources").listFiles())
+					.map(f -> f.toURI()).toArray(URI[]::new);
+			
+				// This will also compile
+				URL[] urls = Arrays.stream(new File("resources").listFiles())
+					.map(f -> f.toURI()).toArray(URL[]::new);
+				```
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				```scala
+				trait CallableExecutor extends Executor {
+					def execute(task: Callable[_]): Unit = execute(new Runnable {
+						override def run(): Unit = task.call()
+					})
+				}
+				
+				val executor = new ForkJoinPool() with CallableExecutor
+				```
+			
+				
+				```java
+				interface CallableExecutor extends Executor {
+					default void execute(Callable<?> operation) {
+						execute(operation::call);
+					}
+				}
+				
+				class CallableFJP extends ForkJoinPool implements CallableExecutor {}
+				LoggingExecutor executor = new CallableFJP();			
+				```
+			</script>
+		</section>
+		
+		<section data-markdown>
+			<script type="text/template">
+				Wait, <span class="marked2">Java 8</span> is better then <span class="marked">Scala</span>? 
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				```scala
+				trait CallableExecutor extends Executor {
+					def execute(task: Callable[_]): Unit = execute(new Runnable {
+						override def run(): Unit = task.call()
+					})
+				}
+				
+				val executor = new ForkJoinPool() with CallableExecutor
+				val threadPool = new ScheduledThreadPoolExecutor(4) with CallableExecutor
+				```
+			
+				
+				```java
+				interface CallableExecutor extends Executor {
+					default void execute(Callable<?> operation) {
+						execute(operation::call);
+					}
+				}
+				
+				class CallableFJP extends ForkJoinPool implements CallableExecutor {}
+				
+				class CallableSTPE extends 
+					ScheduledThreadPoolExecutor implements CallableExecutor {
+						public CallableSTPE() { super(4); }
+				}
+
+				LoggingExecutor executor = new CallableFJP();
+				CallableExecutor threadPool = new CallableSTPE();
+				```
+			</script>
+		</section>
+
+		<section data-markdown>
+			<script type="text/template">
+				<span class="marked bigger">Scala</span> `is` <br> 
+				<span class="marked">functional</span> `and` <span class="marked2">object oriented</span> <br> 
+				`general purpose language with` <br>
+				strong static and <span class="marked">inferred</span> <br> 
+				`type system`
+
+				<span class="marked2 bigger">Java</span> `is` <br> 
+				<span class="marked2">object oriented</span> <br> 
+				`general purpose language with` <br>
+				strong static and <span class="marked2">manifest</span><br>
+				`type system`
 			</script>
 		</section>
 
@@ -254,393 +393,441 @@
 
 		<section data-markdown>
 			<script type="text/template">
-				### <a href="https://scastie.scala-lang.org" class="marked">scastie.scala-lang.org</a>
+			* Functional Programming
+			* Type system
+			* General look and feel
 
-				Try it as we speak
+			<br>	
+
+			Try it: <a href="https://scastie.scala-lang.org" class="marked">scastie.scala-lang.org</a>
 			</script>
 		</section>
 
-		<section data-markdown>
-			<script type="text/template">
-				Syntax tricks: <span class="marked">naming</span>
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					## <span class="marked2">Functional Programming!</span>
+					## Yes, but <span class="marked">why?</span>
+				</script>
+			</section>
 
-				```scala
-				case class Vector(params: Int*) {
-				  // operator is just a method named `*`
-					def *(a: Int) = Vector((params map (_ * a)):_*)
-					def `And we can be even crazier!` = "madness"
-				}
+			<section data-markdown>
+				<script type="text/template">
+					<span class="marked bigger">Monads</span> ???
 
-				Vector(1, 2, 3) * 3
-				Vector(1).`And we can be even crazier!`
-				```
+					<img src="imgs/alpaca.png">
+				</script>
+			</section>
 
-			</script>
+			<section data-markdown>
+				<script type="text/template">
+					<span class="marked">Functions</span> <span class="bigger">></span> <span class="marked2">Lambdas</span>
+	
+					```scala
+					val addOne: Int => Int =
+						(a: Int) => a + 1 // definition
+	
+	
+					val addAny: Int => Int => Int =
+					(a: Int) => (b: Int) => a + b // definition
+	
+					def subtractAny(a: Int)(b: Int) = a - b
+	
+					val addTwo = addAny(2) // Int => Int
+					val removeTwo = subtractAny(2) // Int => Int
+					```
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					## <span class="marked">Immutability</span>
+	
+					* `val` over `var`
+					* `collection` <span class="marked">immutable</span> `by default`
+					* `no side effects in` APIs
+	
+					`sbt codebase`: 7694 `vals vs` 127 `vars`
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					#### <span class="marked">Functional</span> Programing
+	
+					Scalaz/Cats
+	
+					<img src="imgs/alpaca.png" class="monads">
+				</script>
+			</section>
 		</section>
 
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+				Type system
+				</script>
+			</section>
 
+			<section data-markdown>
+				<script type="text/template">
+					Types: <span class="marked">Definitions</span>
+	
+					```scala
+					type IntMatrix = Array[Array[Int]]
+					type Matrix[Type] = Array[Array[Type]]
+					type NumericMatrix[Type <: Numeric[Type]] = Array[Array[Type]]
+	
+					def twice[A](matrix: NumericMatrix[A]): NumericMatrix[A] =
+					 for {
+						row <- matrix
+						elem <- row
+					} yield row * 2
+	
+					```
+	
+					<img src="imgs/alpaca.png" class="monads">
+	
+				</script>
+			</section>
+	
+			<section data-markdown>
+				<script type="text/template">
+					Types:  <span class="marked">Variance</span>
+	
+					```scala
+					class Animal
+					class Dog extends Animal
+					
+					class Food[+For]
+					def test(food: Food[Animal]) = ???
+					
+					test(new Food[Dog]) //try to implement this is Java
+					
+					class Function[-Param, +Return]
+					def stringify(function: Function[Animal, CharSequence]) = ???
+					
+					stringify(new Function[Any, String])
+					stringify(new Function[Animal, CharSequence])
+					
+					stringify(new Function[Dog, CharSequence]) // won't compile
+					stringify(new Function[Animal, Any]) // won't compile
+					```
+					<img src="imgs/alpaca.png" class="monads">
+				</script>
+			</section>
+	
+			<section data-markdown>
+				<script type="text/template">
+					<span class="marked">Implicits</span> and  <span class="marked2">Typeclasses</span>
+					```scala
+					val ordering: Ordering[String] = ???
+					def sort1[A](col: Seq[A], ord: Ordering[A]) = ???
+	
+					sort1(Seq("a", "b"), ordering)
+					```
+	
+					```scala
+					// or better
+					def sort2[A](col: Seq[A])(implicit ord: Ordering[A]) = ???
+	
+					import ImplicitOrderings._
+					sort2(Seq("a", "b"))
+					```
+	
+					```scala
+					def sort3[A: Ordering](col: Seq[A]) = ???
+	
+					import ImplicitOrderings._
+					sort3(Seq("a", "b"))
+					```
+	
+					<img src="imgs/alpaca.png" class="monads">
+				</script>
+			</section>
 
-		<section data-markdown>
-			<script type="text/template">
-				Syntax tricks: everything <span class="marked bigger">returns</span>&nbsp;a&nbsp;value
+			<section data-markdown>
+				<script type="text/template">
+					## Collections
+	
+					```scala
+					Vector("Foo", "Bar", "Baz").map(_.drop(1)) // returns Vector
+					Set("Foo", "Bar", "Baz").map(_.drop(1)) // returns Set
+	
+					Seq(1, 2, 3).sum // will compile
+					Seq("a", "b").sum // will not compile
+					```
+				</script>
+			</section>
 
-				```scala
-				// for ... yield loop and if return value
-				def abs(a: Int) = if(a < 0) -a else a
-				val sqrts = for(i <- Seq(1, 2, 3)) yield i * i
-				```
-
-				```scala
-				// blocks return value and can define val/vars/def
-				val a = {
-				  val b = 3
-					def sqrt(v: Int) = v * v
-					sqrt(b)
-				}
-
-				// you can ommit `{}` for single expression
-				if (isFriday()) grabBeer() else {
-				  doALotOfWork()
-				  grabCoffee()
-				}
-				```
-			</script>
 		</section>
 
-		<section data-markdown>
-			<script type="text/template">
-				Sidenote<span/>: <span class="marked bigger">DSLs</span>
+		<section>
+			<section data-markdown>
+				<script type="text/template">
+					General look and feel
+				</script>
+			</section>
 
-				<a class="marked2" href="https://github.com/fogus/baysick">BAYSICK</a> - subset of BASIC implemented as Scala <span class="marked">DSL</span>
+			<section data-markdown>
+				<script type="text/template">
+					Syntax tricks: <span class="marked">naming</span>
 
-				```
-				// This compiles and run!
-				object SquareRoot extends Baysick with App {
-					10 PRINT "Enter a number"
-					20 INPUT 'n
-					30 PRINT "Square root of " % "'n is " % SQRT('n)
-					40 END
+					```scala
+					case class Vector(params: Int*) {
+						// operator is just a method named `*`
+						def *(a: Int) = Vector((params map (_ * a)):_*)
+						def `And we can be even crazier!` = "madness"
+					}
 
-					RUN
-				}
-				```
-				<img src="imgs/alpaca.png" class="monads">
-			</script>
-		</section>
+					Vector(1, 2, 3) * 3
+					Vector(1).`And we can be even crazier!`
+					```
 
-		<section data-markdown>
-			<script type="text/template">
-				Syntax tricks: <span class="marked">imports</span>&nbsp;everywhere
+				</script>
+			</section>
 
-				```scala
-				val immutable = Set(1, 2, 3) // good default in Scala
 
-				if (unsafeOperation){
-					import collection.mutable.Set
-					val mutable = Set(1, 2, 3)
-				}
 
-				val immutableAgain = Set(1, 2, 3) // good default in Scala
+			<section data-markdown>
+				<script type="text/template">
+					Syntax tricks: everything <span class="marked bigger">returns</span>&nbsp;a&nbsp;value
 
-				```
-			</script>
-		</section>
+					```scala
+					// for ... yield loop and if return value
+					def abs(a: Int) = if(a < 0) -a else a
+					val sqrts = for(i <- Seq(1, 2, 3)) yield i * i
+					```
 
-		<section data-markdown>
-			<script type="text/template">
-				Nesting
+					```scala
+					// blocks return value and can define val/vars/def
+					val a = {
+						val b = 3
+						def sqrt(v: Int) = v * v
+						sqrt(b)
+					}
 
-				```scala
-				object A {
-				 val b = {
-					def c()={
-					 object D {
-					  trait E {
-						 val F = {
-							def G() = {
-							 class H {}
-							  "too deep!"
-					   }}}
-					  D
+					// you can ommit `{}` for single expression
+					if (isFriday()) grabBeer() else {
+						doALotOfWork()
+						grabCoffee()
+					}
+					```
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					Sidenote<span/>: <span class="marked bigger">DSLs</span>
+
+					<a class="marked2" href="https://github.com/fogus/baysick">BAYSICK</a> - subset of BASIC implemented as Scala <span class="marked">DSL</span>
+
+					```
+					// This compiles and run!
+					object SquareRoot extends Baysick with App {
+						10 PRINT "Enter a number"
+						20 INPUT 'n
+						30 PRINT "Square root of " % "'n is " % SQRT('n)
+						40 END
+
+						RUN
+					}
+					```
+					<img src="imgs/alpaca.png" class="monads">
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					Syntax tricks: <span class="marked">imports</span>&nbsp;everywhere
+
+					```scala
+					val immutable = Set(1, 2, 3) // good default in Scala
+
+					if (unsafeOperation){
+						import collection.mutable.Set
+						val mutable = Set(1, 2, 3)
+					}
+
+					val immutableAgain = Set(1, 2, 3) // good default in Scala
+
+					```
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					Nesting
+
+					```scala
+					object A {
+					val b = {
+						def c()={
+						object D {
+							trait E {
+							val F = {
+								def G() = {
+								class H {}
+									"too deep!"
+							}}}
+							D
+						}}
+					c()
 					}}
-				 c()
-}}
-				```
+					```
 
-				<img src="imgs/alpaca.png" class="monads">
-			</script>
-		</section>
+					<img src="imgs/alpaca.png" class="monads">
+				</script>
+			</section>
 
-		<section data-markdown>
-			<script type="text/template">
-				## String <span class="marked">interpolation</span>
+			<section data-markdown>
+				<script type="text/template">
+					## String <span class="marked">interpolation</span>
 
-				```scala
-				val localVal = "localVal"
+					```scala
+					val localVal = "localVal"
 
-				s"I will be filled with $localVal or even block ${
-					"Any scala code can goes here!"
-				}"
-				```
+					s"I will be filled with $localVal or even block ${
+						"Any scala code can goes here!"
+					}"
+					```
 
-				Not a <span class="marked2">special</span> case
+					Not a <span class="marked2">special</span> case
 
-				```
-				implicit class JsonInterpolator(val sc: StringContext) {
-					def json(args: Any*): Json  = ???
-				}
-				val json = json"""{"a": $localVal}""" // will return json
+					```
+					implicit class JsonInterpolator(val sc: StringContext) {
+						def json(args: Any*): Json  = ???
+					}
+					val json = json"""{"a": $localVal}""" // will return json
 
-				```
+					```
 
-				<img src="imgs/alpaca.png" class="monads">
-			</script>
-		</section>
+					<img src="imgs/alpaca.png" class="monads">
+				</script>
+			</section>
 
-		<section data-markdown>
-			<script type="text/template">
-				Scala and <span class="marked">OOP</span> still&nbsp;better&nbsp;then&nbsp;Java.
+			<section data-markdown>
+				<script type="text/template">
+					Scala and <span class="marked">OOP</span> still&nbsp;better&nbsp;then&nbsp;Java.
 
-				```scala
-				trait Foo1 { def foo() = 1 }
+					```scala
+					trait Foo1 { def foo() = 1 }
 
-				trait Foo2 { def foo() = 2 }
+					trait Foo2 { def foo() = 2 }
 
-				class Bar extends Foo1 with Foo2 {
-					foo() // 1 or 2 or does not compile?
-				}
+					class Bar extends Foo1 with Foo2 {
+						foo() // 1 or 2 or does not compile?
+					}
 
-				```
-
-
-				```scala
-				trait Output { def println(msg: String) = ??? }
-				object StdOutput extends Output
-
-				val msg = "We can use inheritance static methods!"
-				StdOutput.println(msg)
-
-				```
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
-				## <span class="marked">case class</span>
-
-
-				```scala
-				case class Point(a: Int, b: Int)
-
-				// equals and hashCode, factory method...
-				new Point(1,2) == Point(1,2) // true
-
-				// ... copy method and fancy toString are generated for you
-				println(Point(1,2).copy(b = 3)) // prints 'Point(1, 3)'
-
-				```
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
-				### pattern <span class="marked">match</span>ing
-
-
-				```scala
-				case class Point(a: Int, b: Int)
-
-				def myFavouritePoints(p: Point) = p match {
-					case point if isInteresting(point) =>
-						true // We can create guards
-					case Point(0, _) =>
-						true // We can match specific values
-					case Point(x, 0) if x > 0 =>
-						true // we can extract specific value
-					case other @ Point(x, y) if iWantToPrint(x, y) =>
-						true // We can always mix it all together
-					case _ =>
-						false // Default case
-				}
-				```
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
-				### Pattern <span class="marked">match</span>ing
-				Not&nbsp;a&nbsp;<span class="marked2">special</span>&nbsp;case!
-
-				```
-				object OnYAxis {
-					def unapply(p: Point): Option[Int] =
-						if(p.y == 0) Some(p.x) else None
-				}
-				def doSomething(p: Point) = p match {
-					case OnYAxis(x) => x
-				}
-
-				// or even
-				val OnYAxis(x) = Point(4, 0)
-
-				```
-
-				<img src="imgs/alpaca.png" class="monads">
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
-				Live example.
-
-				How can I return <span class="marked2">2 values</span> from a <span class="marked">function</span>?
-
-				```scala
-				val (a, b) = { // This is syntactic sugar for `Tuple2(a, b)`
-					val a = costlyOperation()
-					val b = costlyOperationOnA(a)
-					(a, b) // This is syntactic sugar for `Tuple2(a, b)`
-				}
-				```
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
-				<span class="marked">Functions</span> <span class="bigger">></span> <span class="marked2">Lambdas</span>
-
-				```scala
-				val addOne: Int => Int =
-					(a: Int) => a + 1 // definition
-
-
-				val addAny: Int => Int => Int =
-				(a: Int) => (b: Int) => a + b // definition
-
-				def subtractAny(a: Int)(b: Int) = a - b
-
-				val addTwo = addAny(2) // Int => Int
-				val removeTwo = subtractAny(2) // Int => Int
-				```
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
-				Types: <span class="marked">Definitions</span>
-
-				```scala
-				type IntMatrix = Array[Array[Int]]
-				type Matrix[Type] = Array[Array[Type]]
-				type NumericMatrix[Type <: Numeric[Type]] = Array[Array[Type]]
-
-				def twice[A](matrix: NumericMatrix[A]): NumericMatrix[A] =
-				 for {
-					row <- matrix
-					elem <- row
-				} yield row * 2
-
-				```
-
-				<img src="imgs/alpaca.png" class="monads">
-
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
-				Types:  <span class="marked">Variance</span>
-
-				```scala
-class Animal
-class Dog extends Animal
-
-class Food[+For]
-def test(food: Food[Animal]) = ???
-
-test(new Food[Dog]) //try to implement this is Java
-
-class Function[-Param, +Return]
-def stringify(function: Function[Animal, CharSequence]) = ???
-
-stringify(new Function[Any, String])
-stringify(new Function[Animal, CharSequence])
-
-stringify(new Function[Dog, CharSequence]) // won't compile
-stringify(new Function[Animal, Any]) // won't compile
-				```
-				<img src="imgs/alpaca.png" class="monads">
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
-				<span class="marked">Implicits</span> and  <span class="marked2">Typeclasses</span>
-				```scala
-				val ordering: Ordering[String] = ???
-				def sort1[A](col: Seq[A], ord: Ordering[A]) = ???
-
-				sort1(Seq("a", "b"), ordering)
-				```
-
-				```scala
-				// or better
-				def sort2[A](col: Seq[A])(implicit ord: Ordering[A]) = ???
-
-				import ImplicitOrderings._
-				sort2(Seq("a", "b"))
-				```
-
-				```scala
-				def sort3[A: Ordering](col: Seq[A]) = ???
-
-				import ImplicitOrderings._
-				sort3(Seq("a", "b"))
-				```
-
-				<img src="imgs/alpaca.png" class="monads">
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
-				## <span class="marked">Immutability</span>
-
-				* `val` over `var`
-				* `collection` <span class="marked">immutable</span> `by default`
-				* `no side effects in` APIs
-
-				`sbt codebase`: 7694 `vals vs` 127 `vars`
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
-				## Collections
-
-				```scala
-				Vector("Foo", "Bar", "Baz").map(_.drop(1)) // returns Vector
-				Set("Foo", "Bar", "Baz").map(_.drop(1)) // returns Set
-
-				Seq(1, 2, 3).sum // will compile
-				Seq("a", "b").sum // will not compile
-				```
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
-				## Futures
-
-				```scala
-				val result = Future(longRunningOperation)
-				println(result.isCompile) // Not yet...
-
-				val secondResult = result.map(r => longRunningOperationOnResult(r))
-
-				Await(secondResult, 2.minutes) // This will produce result
-				```
-			</script>
+					```
+
+
+					```scala
+					trait Output { def println(msg: String) = ??? }
+					object StdOutput extends Output
+
+					val msg = "We can use inheritance static methods!"
+					StdOutput.println(msg)
+
+					```
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					## <span class="marked">case class</span>
+
+
+					```scala
+					case class Point(a: Int, b: Int)
+
+					// equals and hashCode, factory method...
+					new Point(1,2) == Point(1,2) // true
+
+					// ... copy method and fancy toString are generated for you
+					println(Point(1,2).copy(b = 3)) // prints 'Point(1, 3)'
+
+					```
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### pattern <span class="marked">match</span>ing
+
+
+					```scala
+					case class Point(a: Int, b: Int)
+
+					def myFavouritePoints(p: Point) = p match {
+						case point if isInteresting(point) =>
+							true // We can create guards
+						case Point(0, _) =>
+							true // We can match specific values
+						case Point(x, 0) if x > 0 =>
+							true // we can extract specific value
+						case other @ Point(x, y) if iWantToPrint(x, y) =>
+							true // We can always mix it all together
+						case _ =>
+							false // Default case
+					}
+					```
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					### Pattern <span class="marked">match</span>ing
+					Not&nbsp;a&nbsp;<span class="marked2">special</span>&nbsp;case!
+
+					```
+					object OnYAxis {
+						def unapply(p: Point): Option[Int] =
+							if(p.y == 0) Some(p.x) else None
+					}
+					def doSomething(p: Point) = p match {
+						case OnYAxis(x) => x
+					}
+
+					// or even
+					val OnYAxis(x) = Point(4, 0)
+
+					```
+
+					<img src="imgs/alpaca.png" class="monads">
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					Live example.
+
+					How can I return <span class="marked2">2 values</span> from a <span class="marked">function</span>?
+
+					```scala
+					val (a, b) = { // This is syntactic sugar for `Tuple2(a, b)`
+						val a = costlyOperation()
+						val b = costlyOperationOnA(a)
+						(a, b) // This is syntactic sugar for `Tuple2(a, b)`
+					}
+					```
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					## Futures
+	
+					```scala
+					val result = Future(longRunningOperation)
+					println(result.isCompile) // Not yet...
+	
+					val secondResult = result.map(r => longRunningOperationOnResult(r))
+	
+					Await(secondResult, 2.minutes) // This will produce result
+					```
+				</script>
+			</section>
 		</section>
 
 		<section data-markdown>
@@ -751,16 +938,6 @@ stringify(new Function[Animal, Any]) // won't compile
 				* Integration with less, coffeescript, Akka
 				* Modern: JSON, websocets, evensource, commet
 				* No<span class="marked">SQL</span> and Big Data support
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
-				#### <span class="marked">Functional</span> Programing
-
-				Scalaz/Cats
-
-				<img src="imgs/alpaca.png" class="monads">
 			</script>
 		</section>
 
