@@ -8,8 +8,13 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 class Test {
+
+  static String mapS(String a) {return  a;}
+
   void test() {
     URI[] uris = Arrays.stream(new File("resources").listFiles())
       .map(f -> f.toURI()).toArray(URI[]::new);
@@ -21,6 +26,17 @@ class Test {
 
     CallableExecutor forkJoin = new CallableFJP();
     CallableExecutor threadPool = new CallableSTPE();
+
+    Function<String, String> bold = a -> "*" + a + "*";
+    Function<String, String> h1 = a -> "#" + a;
+    Function<String, String> boldH1 = bold.andThen(h1)
+
+
+
+
+    Stream.of("a").map(toUpperCase);
+    Stream.of("a").map(toUpperCase);
+
   }
 }
 

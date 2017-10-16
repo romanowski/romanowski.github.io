@@ -59,6 +59,15 @@
 			width: 200px;
 		}
 
+		.right {
+			text-align: right;
+			margin-right: -40px !important;
+		}
+		.left {
+			text-align: left;
+			margin-left: -40px !important;			
+		}
+
 		html, body, #tv {
 	padding: 0;
 	margin: 0;
@@ -245,9 +254,7 @@
 			<script type="text/template">
 				```scala
 				trait CallableExecutor extends Executor {
-					def execute(task: Callable[_]): Unit = execute(new Runnable {
-						override def run(): Unit = task.call()
-					})
+					def execute(task: Callable[_]): Unit = execute(() => task.call())
 				}
 				
 				val executor = new ForkJoinPool() with CallableExecutor
@@ -303,9 +310,8 @@
 			<script type="text/template">
 				```scala
 				trait CallableExecutor extends Executor {
-					def execute(task: Callable[_]): Unit = execute(new Runnable {
-						override def run(): Unit = task.call()
-					})
+					def execute(task: Callable[_]): Unit = 
+						execute(execute(() => task.call()))
 				}
 				
 				val executor = new ForkJoinPool() with CallableExecutor
@@ -327,7 +333,7 @@
 		
 		<section data-markdown>
 			<script type="text/template">
-				Wait, <span class="marked2">Java 8</span> is better then <span class="marked">Scala</span>? 
+				Wait, <span class="marked2">Java 8</span> is as good as <span class="marked">Scala</span>? 
 			</script>
 		</section>
 
@@ -335,15 +341,13 @@
 			<script type="text/template">
 				```scala
 				trait CallableExecutor extends Executor {
-					def execute(task: Callable[_]): Unit = execute(new Runnable {
-						override def run(): Unit = task.call()
-					})
+					def execute(task: Callable[_]): Unit = 
+						execute(execute(() => task.call()))
 				}
 				
 				val executor = new ForkJoinPool() with CallableExecutor
 				val threadPool = new ScheduledThreadPoolExecutor(4) with CallableExecutor
 				```
-			
 				
 				```java
 				interface CallableExecutor extends Executor {
@@ -413,6 +417,24 @@
 
 			<section data-markdown>
 				<script type="text/template">
+					<img src="imgs/ooo-anti.png"/>
+				</script>
+			</section>
+
+
+
+			<section data-markdown>
+				<script type="text/template">
+					<span class="marked2">Functional Programming?</span>
+
+					* Functions `are fist-class citizens` 
+					* `Avoid state / side effects` (Immutability)
+					
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
 					<span class="marked bigger">Monads</span> ???
 
 					<img src="imgs/alpaca.png">
@@ -421,33 +443,90 @@
 
 			<section data-markdown>
 				<script type="text/template">
-					<span class="marked">Functions</span> <span class="bigger">></span> <span class="marked2">Lambdas</span>
-	
-					```scala
-					val addOne: Int => Int =
-						(a: Int) => a + 1 // definition
-	
-	
-					val addAny: Int => Int => Int =
-					(a: Int) => (b: Int) => a + b // definition
-	
-					def subtractAny(a: Int)(b: Int) = a - b
-	
-					val addTwo = addAny(2) // Int => Int
-					val removeTwo = subtractAny(2) // Int => Int
-					```
+					## Functions
+					<span class=fragment> <span class="marked">S.O.L.I.D</span> `meets` <span class="marked2">F.P.</span></span>
 				</script>
 			</section>
 
 			<section data-markdown>
 				<script type="text/template">
-					## <span class="marked">Immutability</span>
+					With Functions
+
+					Free | <span class="marked bigger">S</span>`ingle responsibility principle` 
+					--- | ---
+					Free | <span class="marked bigger">O</span>`pen/closed principle`  
+					Free | <span class="marked bigger">L</span>`iskov substitution principle`
+					Free | <span class="marked bigger">I</span>`nterface segregation principle` 
+					Easier | <span class="marked bigger">D</span>`ependency inversion principle`
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					<span class="marked bigger">Scala Function</span> <span class="bigger"> = </span> <span class="marked2">Java Lambda</span>
+
+					<img src="imgs/alpaca.png" class="monads fragment" style="margin-top:40px; margin-left: 110px">
+
+					<div class=fragment>
+
+					* curring
+					* checked exceptions 
+					* better/shorter syntax
+					* Interfaces in API are functional
+				
+					<div>
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					<span class="marked">Immutable</span> objects?
 	
-					* `val` over `var`
-					* `collection` <span class="marked">immutable</span> `by default`
+					* easier to construct, test and use
+					* thread-<span class="marked2">safe</span>
+					* helps with temporal coupling
+					* no need for defensive coping
+					* <span class="marked2">easier</span> caching	
+
+					<a class="small" href="yegor256.com/2014/06/09/objects-should-be-immutable.html">yegor256.com/2014/06/09/objects-should-be-immutable.html</a>
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					<span class="marked2">Immutable</span> object FAQ
+	
+					<div class=left>`Are immutable objects harder to write/read?`</div>
+					<div class=right>`Maybe in Java. In Scala it is default.`</div>
+					<br> 
+					<div class=left>`Is coping instead of changing is expensive?`</div>
+					<div class=right>`Creating objects is cheap in modern JVM.` <br>`Immutable data structures usually shares data.`</div>
+					<br> 
+			
+					<div class=left>`Can I use it on enterprise applications?`</div>
+					<div class=right>`E.g. Erlang is fully immutable.`</div>
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					<span class="marked2">Immutability</span> `in` <span class="marked">Scala</span>
+
+					* `val` over `var (sbt codebase`: 7694 `/` 127 `)`
+					* `collection are` <span class="marked">immutable</span> `by default`
 					* `no side effects in` APIs
-	
-					`sbt codebase`: 7694 `vals vs` 127 `vars`
+					* by <span class="marked">default</span>
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					Avoid Side effects / Stateful
+
+					Easier in Scala:
+
+					* Implicits
+					* Type System
 				</script>
 			</section>
 

@@ -20,9 +20,7 @@ trait LoggingExecutor  {
 }
 
 trait CallableExecutor extends Executor {
-  def execute(task: Callable[_]): Unit = execute(new Runnable {
-    override def run(): Unit = task.call()
-  })
+  def execute(task: Callable[_]): Unit = execute(() => task.call())
 }
 
 object PG extends App {
@@ -32,9 +30,14 @@ object PG extends App {
 
   val test = new Executor with LoggingExecutor
 
-  test.execute("ala", new Runnable {
-    override def run(): Unit = println("Ala")
-  })
+  test.execute("ala", () => println("Ala"))
   val uris = new File("resources").listFiles.map(_.toURI)
 
+
+  val bold = (a: String) => s"**$a**"
+  val h1 = (a: String) => s"#$a"
+  val boldH1 = h1 andThen bold
+
+  List("A").map(toUpperCase)
+  List("A").map(toUpperCase)
 }
