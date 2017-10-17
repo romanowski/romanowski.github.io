@@ -15,27 +15,39 @@ class Test {
 
   static String mapS(String a) {return  a;}
 
-  void test() {
-    URI[] uris = Arrays.stream(new File("resources").listFiles())
+
+  public static void main(String[] args){
+    URI[] uris = Arrays.stream(new File(".").listFiles())
       .map(f -> f.toURI()).toArray(URI[]::new);
 
-    // This will also compile
-    URL[] urls = Arrays.stream(new File("resources").listFiles())
+    URL[] urls = Arrays.stream(new File(".").listFiles())
       .map(f -> f.toURI()).toArray(URL[]::new);
+  }
 
+  void test() {
+    Stream<URI> uris = Arrays.stream(new File(".").listFiles()).map(File::toURI);
+
+    URL[] urls = uris.toArray(URL[]::new);
+
+    // This will also compile
+  /*  URL[] urls = Arrays.stream(new File(".").listFiles())
+      .map(f -> f.toURI()).toArray(URL[]::new);
+*/
 
     CallableExecutor forkJoin = new CallableFJP();
     CallableExecutor threadPool = new CallableSTPE();
 
     Function<String, String> bold = a -> "*" + a + "*";
     Function<String, String> h1 = a -> "#" + a;
-    Function<String, String> boldH1 = bold.andThen(h1)
+    Function<String, String> boldH1 = bold.andThen(h1);
 
 
 
 
+/*
     Stream.of("a").map(toUpperCase);
     Stream.of("a").map(toUpperCase);
+*/
 
   }
 }
@@ -52,4 +64,3 @@ class CallableSTPE extends ScheduledThreadPoolExecutor implements CallableExecut
     super(4);
   }
 }
-

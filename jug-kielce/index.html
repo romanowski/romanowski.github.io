@@ -228,6 +228,11 @@
 			</script>
 		</section>
 
+		<section data-markdown>
+			<script type="text/template">
+			Try it: <a href="https://scastie.scala-lang.org" class="marked">scastie.scala-lang.org</a>
+			</script>
+		</section>
 
 		<section data-markdown>
 			<script type="text/template">
@@ -239,12 +244,10 @@
 			Before <span class="marked2">Java 8</span>
 			```java
 			List<URI> urlsList = new ArrayList<>();
-      for (File resource : new File("resources").listFiles()) {
-        urlsList.add(resource.toURI());
-      }
+			for (File resource : new File("resources").listFiles()) {
+				urlsList.add(resource.toURI());
+			}
 			URI[] uris = urlsList.toArray(new URI[urlsList.size()]);
-			// This will also compile...
-			URL[] urls = urlsList.toArray(new URL[urlsList.size()]);
 			```
 			</script>
 		</section>
@@ -375,7 +378,7 @@
 				<span class="marked">functional</span> `and` <span class="marked2">object oriented</span> <br> 
 				`general purpose language with` <br>
 				strong static and <span class="marked">inferred</span> <br> 
-				`type system`
+				`type system that is ` Turing Complete
 
 				<span class="marked2 bigger">Java</span> `is` <br> 
 				<span class="marked2">object oriented</span> <br> 
@@ -387,23 +390,12 @@
 
 		<section data-markdown>
 			<script type="text/template">
-			Scala is <span class="marked bigger">designed</span>
-
-			fewer <span class="marked2">special</span> cases,
-			more <span class="marked2">generic</span> mechanisms
-
-			</script>
-		</section>
-
-		<section data-markdown>
-			<script type="text/template">
 			* Functional Programming
 			* Type system
 			* General look and feel
+			* Ecosystem
 
 			<br>	
-
-			Try it: <a href="https://scastie.scala-lang.org" class="marked">scastie.scala-lang.org</a>
 			</script>
 		</section>
 
@@ -510,41 +502,104 @@
 
 			<section data-markdown>
 				<script type="text/template">
+					## <span class="marked">case class</span>
+
+
+					```scala
+					case class Point(a: Int, b: Int)
+
+					// equals and hashCode, factory method...
+					new Point(1,2) == Point(1,2) // true
+
+					// ... copy method and fancy toString are generated for you
+					println(Point(1,2).copy(b = 3)) // prints 'Point(1, 3)'
+
+					```
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
 					<span class="marked2">Immutability</span> `in` <span class="marked">Scala</span>
 
 					* `val` over `var (sbt codebase`: 7694 `/` 127 `)`
 					* `collection are` <span class="marked">immutable</span> `by default`
 					* `no side effects in` APIs
-					* by <span class="marked">default</span>
+					
+					<br>
+
+					<span class="marked">Scala</span> is immutable by <span class="marked2">default.</span><br>`\in most cases\`
 				</script>
 			</section>
 
 			<section data-markdown>
 				<script type="text/template">
-					Avoid Side effects / Stateful
+				Use <span class="marked bigger">Monads</span> to 
 
-					Easier in Scala:
-
-					* Implicits
-					* Type System
+				avoid Side effects / global mutable state.
 				</script>
 			</section>
 
 			<section data-markdown>
 				<script type="text/template">
-					#### <span class="marked">Functional</span> Programing
+				<span class="marked bigger">Monads ???</span> Scalaz/Cats
 	
-					Scalaz/Cats
-	
-					<img src="imgs/alpaca.png" class="monads">
+				<img src="imgs/alpaca.png">
 				</script>
 			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+				With <span class="marked">FP</span> you can start small.
+
+				FP pays off on <span class="marked2">use site</span>.
+				</script>
+			</section>
+
+
 		</section>
 
 		<section>
 			<section data-markdown>
 				<script type="text/template">
-				Type system
+				## Type system
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+				Is <span class="marked2">Java</span> static typed?
+
+				```java
+				File[] files = new File(".").listFiles();
+				List<URI> uriList = new ArrayList<>();
+				for (File resource : files) {
+					urlsList.add(resource.toURI());
+				}
+				Stream<URI> uris = Arrays.stream(files).map(File::toURI);
+
+
+				// Below compiles and throws exception at runtime
+				uriList.toArray(new URL[urlsList.size()]);
+				uris.toArray(URL[]::new);
+				```
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+				<span class="marked">Scala</span> is truly stating typed
+
+				```java
+				Seq(1, 2, 3).sum // compiles fine
+				Seq("a", "b", "c").sum // compilation error
+
+				Seq("a" -> 6, "b" -> 5).toMap // compiles fine
+				Seq("a", "b").toMap // compilation error
+
+				Vector("Foo", "Bar", "Baz").map(_.drop(1)) // returns Vector
+				Set("Foo", "Bar", "Baz").map(_.drop(1)) // returns Set
+				```
 				</script>
 			</section>
 
@@ -598,47 +653,54 @@
 	
 			<section data-markdown>
 				<script type="text/template">
-					<span class="marked">Implicits</span> and  <span class="marked2">Typeclasses</span>
+					<span class="marked2">Typeclasses</span>
 					```scala
-					val ordering: Ordering[String] = ???
-					def sort1[A](col: Seq[A], ord: Ordering[A]) = ???
+					trait Printer[A]{ def pretty(a: A): String }
+					implicit object StringPrinter extends Printer[String] { ... }
+					implicit object IntPrinter extends Printer[String] { ... }
+					
+					
+					def prettyLong[A](a: A, printer: Printer[A]) = printer.pretty(a)
+					prettyLong(1, IntPrinter) // Java style, boring...
+					
+					def prettyNice[A: Printer](a: A) = implicitly[Printer[A]].pretty(a)
+					prettyNice("Ala") // Now you talking...
 	
-					sort1(Seq("a", "b"), ordering)
+					
+					prettyNice(Array(1, 2)) // Let's support arrays!
+					prettyNice(Array(false)) // But this should not compile...
 					```
-	
-					```scala
-					// or better
-					def sort2[A](col: Seq[A])(implicit ord: Ordering[A]) = ???
-	
-					import ImplicitOrderings._
-					sort2(Seq("a", "b"))
-					```
-	
-					```scala
-					def sort3[A: Ordering](col: Seq[A]) = ???
-	
-					import ImplicitOrderings._
-					sort3(Seq("a", "b"))
-					```
-	
 					<img src="imgs/alpaca.png" class="monads">
 				</script>
 			</section>
 
 			<section data-markdown>
 				<script type="text/template">
-					## Collections
-	
+					<span class="marked">Implicits</span> and  <span class="marked2">Typeclasses</span>
 					```scala
-					Vector("Foo", "Bar", "Baz").map(_.drop(1)) // returns Vector
-					Set("Foo", "Bar", "Baz").map(_.drop(1)) // returns Set
-	
-					Seq(1, 2, 3).sum // will compile
-					Seq("a", "b").sum // will not compile
+					implicit def arrayPretty[A: Printer] = new Printer[Array[A]] {
+						override def pretty(a: Array[A]): String = 
+							a.map(e => prettyNice(e)).mkString("{", ", ", "}")
+					}
+				
+					prettyNice(Array("a", "n"))
+					prettyNice(Array(false)) // This does not compile...
 					```
+
+					`somewhere in client code...`
+
+					```scala
+					case class User(name: String, age: Int)
+					implicit object UserPrinter extends Printer[User]{
+						override def pretty(a: User): String = s"${a.name}, ${a.age} years old"
+					}
+					
+					prettyNice(Array(User("Krzys", 18))) // Yey! I can support any type I want
+					```
+	
+					<img src="imgs/alpaca.png" class="monads">
 				</script>
 			</section>
-
 		</section>
 
 		<section>
@@ -650,9 +712,22 @@
 
 			<section data-markdown>
 				<script type="text/template">
-					Syntax tricks: <span class="marked">naming</span>
+				Scala is <span class="marked bigger">designed</span>
+	
+				fewer <span class="marked2">special</span> cases,
+				more <span class="marked2">generic</span> mechanisms
+	
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					Syntax tricks & <span class="marked">naming</span>
 
 					```scala
+					Seq(1, 1).foreach(println) // or
+					Seq(1, 1) foreach println
+
 					case class Vector(params: Int*) {
 						// operator is just a method named `*`
 						def *(a: Int) = Vector((params map (_ * a)):_*)
@@ -787,44 +862,14 @@
 
 			<section data-markdown>
 				<script type="text/template">
-					Scala and <span class="marked">OOP</span> still&nbsp;better&nbsp;then&nbsp;Java.
-
-					```scala
-					trait Foo1 { def foo() = 1 }
-
-					trait Foo2 { def foo() = 2 }
-
-					class Bar extends Foo1 with Foo2 {
-						foo() // 1 or 2 or does not compile?
-					}
-
-					```
-
+					Objects
 
 					```scala
 					trait Output { def println(msg: String) = ??? }
 					object StdOutput extends Output
 
-					val msg = "We can use inheritance static methods!"
+					val msg = "We can use inheritance to create static methods!"
 					StdOutput.println(msg)
-
-					```
-				</script>
-			</section>
-
-			<section data-markdown>
-				<script type="text/template">
-					## <span class="marked">case class</span>
-
-
-					```scala
-					case class Point(a: Int, b: Int)
-
-					// equals and hashCode, factory method...
-					new Point(1,2) == Point(1,2) // true
-
-					// ... copy method and fancy toString are generated for you
-					println(Point(1,2).copy(b = 3)) // prints 'Point(1, 3)'
 
 					```
 				</script>
@@ -892,21 +937,6 @@
 					```
 				</script>
 			</section>
-
-			<section data-markdown>
-				<script type="text/template">
-					## Futures
-	
-					```scala
-					val result = Future(longRunningOperation)
-					println(result.isCompile) // Not yet...
-	
-					val secondResult = result.map(r => longRunningOperationOnResult(r))
-	
-					Await(secondResult, 2.minutes) // This will produce result
-					```
-				</script>
-			</section>
 		</section>
 
 		<section data-markdown>
@@ -947,88 +977,97 @@
 			</script>
 		</section>
 
-		<section data-markdown>
-			<script type="text/template" class="smaller-list">
-				## IDEs:
+		<section>
 
-				<span class="marked">Intellij</span> / Eclipse <span class="small">(ScalaIDE)</span> /
-				<span class="marked2">Ensime</span>&nbsp;<span class="small">(Emacs&nbsp;VSCode,&nbsp;VIM,&nbsp;sublime)</span>
+			<section data-markdown>
+				<script type="text/template" class="smaller-list">
+					##Ecosystem
+				</script>
+			</section>
 
-				<br>
+			<section data-markdown>
+				<script type="text/template" class="smaller-list">
+					## IDEs:
 
-				## Build tools:
+					<span class="marked">Intellij</span> / Eclipse <span class="small">(ScalaIDE)</span> /
+					<span class="marked2">Ensime</span>&nbsp;<span class="small">(Emacs&nbsp;VSCode,&nbsp;VIM,&nbsp;sublime)</span>
 
-				<span class="marked">SBT</span> / Gradle / <span class="marked2">Pants</span> / Maven
-			</script>
-		</section>
+					<br>
 
-		<section data-markdown>
-			<script type="text/template">
-				## Main Frame<span class="marked">work</span>s
-				and other fascinating libs
+					## Build tools:
 
-				* <span class="marked">Spark</span> - <del>Big</del><span class="marked2">Fast</span> Data
-				* <span class="marked">Akka</span> - super fast concurrency
-				* Web: <span class="marked">Play</span>, Spray, Finatra
-				* Cats/scalaz (<span class="marked2">monad</span>s alert!)
-			</script>
-		</section>
+					<span class="marked">SBT</span> / Gradle / <span class="marked2">Pants</span> / Maven
+				</script>
+			</section>
 
-		<section data-markdown>
-			<script type="text/template">
-				<img src="imgs/spark-logo.png">
+			<section data-markdown>
+				<script type="text/template">
+					## Main Frame<span class="marked">work</span>s
+					and other fascinating libs
 
-				<img src="imgs/spark-runs.jpg">
-			</script>
-		</section>
+					* <span class="marked">Spark</span> - <del>Big</del><span class="marked2">Fast</span> Data
+					* <span class="marked">Akka</span> - super fast concurrency
+					* Web: <span class="marked">Play</span>, Spray, Finatra
+					* Cats/scalaz (<span class="marked2">monad</span>s alert!)
+				</script>
+			</section>
+
+			<section data-markdown>
+				<script type="text/template">
+					<img src="imgs/spark-logo.png">
+
+					<img src="imgs/spark-runs.jpg">
+				</script>
+			</section>
 
 
-		<section data-markdown>
-			<script type="text/template">
-				<img src="imgs/akka-logo.png"/>
-			</script>
-		</section>
+			<section data-markdown>
+				<script type="text/template">
+					<img src="imgs/akka-logo.png"/>
+				</script>
+			</section>
 
-		<section data-markdown>
-			<script type="text/template">
-				<span class=marked>Actor</span>s:
+			<section data-markdown>
+				<script type="text/template">
+					<span class=marked>Actor</span>s:
 
-				* sent and <span class=marked>react</span>s on messages
-				* create new actors
-				* let`it`crash`.com`
-				* only one message processed at time
-			</script>
-		</section>
+					* sent and <span class=marked>react</span>s on messages
+					* create new actors
+					* let`it`crash`.com`
+					* only one message processed at time
+				</script>
+			</section>
 
-		<section data-markdown>
-			<script type="text/template">
-				<span class=marked>React</span>ive streams, jdk9 and <span class=marked>akka</span> streams
-			</script>
-		</section>
+			<section data-markdown>
+				<script type="text/template">
+					<span class=marked>React</span>ive streams, jdk9 and <span class=marked>akka</span> streams
+				</script>
+			</section>
 
-		<section data-markdown>
-			<script type="text/template">
-				## <span class="marked">Play</span>
+			<section data-markdown>
+				<script type="text/template">
+					## <span class="marked">Play</span>
 
-				full stack, web framework
+					full stack, web framework
 
-				* Java/Scala apis
-				* <span class="marked">stateless</span>, non-<span class="marked2">block</span>ing
-				* Integration with less, coffeescript, Akka
-				* Modern: JSON, websocets, evensource, commet
-				* No<span class="marked">SQL</span> and Big Data support
-			</script>
-		</section>
+					* Java/Scala apis
+					* <span class="marked">stateless</span>, non-<span class="marked2">block</span>ing
+					* Integration with less, coffeescript, Akka
+					* Modern: JSON, websocets, evensource, commet
+					* No<span class="marked">SQL</span> and Big Data support
+				</script>
+			</section>
 
-		<section data-markdown>
-			<script type="text/template">
-				* Shapeless (type&nbsp;level&nbsp;programming)
-				* Monix (asycnhronus&nbsp;event&nbsp;programming)
-				* http4s (http)
-				* spire (math)
-				* splick/doobie (sql)
-			</script>
-		</section>
+			<section data-markdown>
+				<script type="text/template">
+					* Shapeless (type&nbsp;level&nbsp;programming)
+					* Monix (asycnhronus&nbsp;event&nbsp;programming)
+					* http4s (http)
+					* spire (math)
+					* splick/doobie (sql)
+				</script>
+			</section>
+		</section>	
 
 		<section data-markdown>
 			<script type="text/template">
