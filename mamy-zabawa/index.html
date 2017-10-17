@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Incremental Compiler: taming Scalac</title>
+	<meta name="description" content="Czy walczyć o komunikację?">
+	<meta name="author" content="Barbara Romanowska">
+
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+	<meta name="viewport"
+	      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+	<style type="text/css">
+		.lefty {
+		text-align: left;
+		font-size: 65% !important;
+		margin-left: 5%  !important;
+		}
+
+		.quote {
+			font-style: italic !important;
+			font-family: Sigmar One !important;
+			font-size: 32px !important;
+			position: fixed !important;
+			top: -50px !important;
+			right: -10px !important;
+		}
+
+		p {
+			background-color: rgba(253,246,	227, 0.5) !important;
+		}
+
+		.marked {
+			font-style: italic !important;
+			font-family: Sigmar One !important;
+			color:  rgb(219, 78, 35);
+		}
+
+		.marked2 {
+			font-style: italic !important;
+			font-weight: bolder !important;
+			color:  rgb(119, 188, 212);
+		}
+
+	</style>
+
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/solarized.css" id="theme">
+
+	<!-- Code syntax highlighting -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+	<link href="https://fonts.googleapis.com/css?family=Sigmar+One" rel="stylesheet">
+
+	<!-- Printing and PDF exports -->
+	<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+
+
+	</script>
+
+	<!--[if lt IE 9]>
+	<script src="lib/js/html5shiv.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+
+<div class="reveal">
+
+	<!-- Any section element inside of this container is displayed as a slide -->
+	<div class="slides">
+
+		<section data-markdown data-background-image="imgs/bg.png">
+			<script type="text/template">
+				## Czy walczyć o komunikację?
+
+				<img src="imgs/1.png">
+			</script>
+		</section>
+
+		<section data-markdown data-background-image="imgs/2nd.png">
+			<script type="text/template">
+			> Ktokolwiek poda kubek zimnej wody<br>jednemu z tych maluczkich,<br>jako że jest uczniem moim,<br>zaprawdę powiadam wam<br>nie minie go nagroda.
+			
+			Mt 10.42
+			</script>
+		</section>
+
+
+			<section data-markdown data-background-image="imgs/bg.png"> 
+				<script type="text/template">
+					<div class=quote>Jeden z tych maluczkich...</div>
+
+					<iframe width="860" height="475" src="https://www.youtube.com/embed/b__d2dQ6T7E?start=225" frameborder="0" allowfullscreen></iframe>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/bg.png"> 
+				<script type="text/template">
+					<div class=quote>Ktokolwiek poda... </div>
+
+					Bezradna rodzina wpatruje się w oczy chorego i bardzo, bardzo **chce pomagać**, ale nie wie jak.
+
+					Zdana na personel medyczny często **bezradnie** towarzyszy podstawowym czynnościom pielęgnacyjnym. 
+
+					Najbliższe osoby towarzysząc cierpieniu chorego z powodu braku odpowiedniej komunikacji szybko zadają sobie pytanie: 
+					
+					### Czy aby to ten sam człowiek? 
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/bg.png"> 
+				<script type="text/template">
+					<div class=quote>Ktokolwiek poda... </div>
+
+					Każdy przypadek jest inny, **każdy człowiek wymaga innego podejścia**, ale moje dwudziestoletnie 
+					doświadczenie zawodowe podpowiada, a wręcz  daje mi pewność, że jakikolwiek wypracowany kanał wzajemnej komunikacji znacznie **oddala chorego od depresji**.
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/bg.png"> 
+				<script type="text/template">
+					<div class=quote>Ktokolwiek poda... </div>
+
+					Dość szybko postępująca **rehabilitacja ruchowa i mowy** przynosi pacjentowi i jego rodzinie widoczną **ulgę**. 
+					
+					Czasami na pozytywne zmiany trzeba **długo czekać**, albo...
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/bg.png"> 
+				<script type="text/template">
+					<div class=quote>Jako, że jest uczniem moim...</div>
+
+					Dlaczego więc szybko pojawia się kolejny problem: <br>**depresja**, czasami głęboka? 
+					
+					Odpowiedzi oczywiście należy szukać u osób, które po długim czasie milczenia wypracowały własną **komunikację**. 
+				</script>
+			</section>
+		
+			<section data-markdown data-background-image="imgs/bg.png"> 
+				<script type="text/template">
+					<div class=quote>Jako, że jest uczniem moim...</div>
+
+					<br>
+					Pytane od oczucia opowiadają one o 
+					
+					<span class=marked2>samotności, strachu i braku nadziei</span>.
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/bg.png"> 
+				<script type="text/template">
+					<div class=quote>Jako, że jest uczniem moim...</div>
+
+					Opowiadają też jak ważna jest szczera modlitwa, szczera relacja z <span class=marked>Jezusem</span>, jak pomaga ona odnaleźć się w nowej sytuacji życiowej.
+
+					Jak trudno bez  <span class=marked>Jezusa</span> -  akceptować siebie i codziennie walczyć podczas rehabilitacji o lepsze jutro. 
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/bg.png"> 
+				<script type="text/template">
+					<div class=quote>Kubek zimnej wody...</div>
+
+					W **literaturze psychologicznej** łatwo możemy odnaleźć stwierdzenie,
+					że odpowiednia <span class=marked2>motywacja</span> jest niezbędna do podejmowania wyzwań, do pokonywania wysiłku np. na rzecz <span class=marked2>rehabilitacji</span>.
+
+					Jak więc trudno jest zaakceptować nowe ciężkie życie, 
+					gdy np. to życie **sprzed miesiąca** było takie aktywne i pozostało w nim wiele niepozamykanych spraw. 
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/bg.png"> 
+				<script type="text/template">
+					<div class=quote>Kubek zimnej wody...</div>
+					Jak więc pomóc choremu odnaleźć <span class=marked>Jezusa</span>, <br>przypomnieć o Jego miłości ?
+
+					Być może, chory pragnie  powiedzieć komuś<br><span class=marked2>dziękuję lub przepraszam</span> ?
+
+					Jak ważna jest dla nas <span class=marked>Spowiedź Święta</span> <br> uzdrawiająca  naszą duszę ?
+
+					Jak dotrzeć z dobrą nowiną o uzdrawiającej mocy <span class=marked>Jezusa</span> do osoby, która właśnie utraciła zdolność **komunikacji** ?	
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/bg.png"> 
+				<script type="text/template">
+					<div class=quote>Kubek zimnej wody...</div>
+
+					Myślę, że jest to zadanie bardzo trudne,<br>ale warto się nad nim <span class=marked2>pochylić</span>. 
+					
+					Terapia neurologopedyczna uczy **komunikacji**<br> ale księża czy osoby bliskie nie mają **odpowiednich narzędzi**.
+
+					Warto o tym **rozmawiać** z chorymi, księżmi, psychologami, surdologopedami czy fizjoterapeutami.
+				</script>
+			</section>
+			<section data-markdown data-background-image="imgs/bg.png"> 
+				<script type="text/template">
+				<div class=quote>Jak zabezpieczyć  potrzeby chorego?</div>
+				**Komunikacja** z chorymi mającymi trudności związane z rozumieniem mowy wspierana jest wieloma <span class=marked2>gestami</span>,<br>dotyczy najczęściej **podstawowych** czynności życiowych.
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/bg.png"> 
+				<script type="text/template">
+					<div class=quote>... zaprawdę powiadam wam nie minie go nagroda.</div>
+					
+					Wzajemna <span class=marked2>współpraca</span> wielu specjalistów i samych chorych może stworzyć **narzędzia** wspierające leczenie <span class=marked2>duszy i ciała</span>. 
+					
+					Szansa na wzajemną, choć trudną **komunikację** z chorym, może doprowadzić do **refleksji** nad życiem i stać się świadectwem **uzdrawiającej mocy** <span class=marked>Jezusa</span>.
+					
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/bg.png"> 
+				<script type="text/template">
+					<video id=thx src="vids/thx.mp4" style="max-height: 480px; ">
+					</video><video id=black src="vids/black.mp4" style="margin-left: 10px" controls/>
+				</script>
+				<script>
+					console.info("ala")
+					var setPlay = function(){
+						var black = document.getElementById('black');
+						black.ontimeupdate = function(){
+							var time = black.currentTime;
+							if (black.currentTime > 31 && !black.ended) {
+								var thx = document.getElementById('thx');
+								if (thx.ended || thx.paused || thx.currentTime <= 0){
+									thx.play();
+								}
+							} 
+						}
+					}
+					window.setTimeout(setPlay, 1000);
+				</script>
+			</section>
+
+		<!-- ################################################################################################################ -->
+	</div>
+
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+
+			// The full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+</script>
+
+</body>
+</html>
