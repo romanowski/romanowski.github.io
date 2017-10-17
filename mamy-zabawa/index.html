@@ -151,7 +151,7 @@
 					<div class=quote>Jako, że jest uczniem moim...</div>
 
 					<br>
-					Pytane od oczucia opowiadają one o 
+					Chorzy pytani o odoczucia opowiadają o 
 					
 					<span class=marked2>samotności, strachu i braku nadziei</span>.
 				</script>
@@ -200,7 +200,7 @@
 					
 					Terapia neurologopedyczna uczy **komunikacji**<br> ale księża czy osoby bliskie nie mają **odpowiednich narzędzi**.
 
-					Warto o tym **rozmawiać** z chorymi, księżmi, psychologami, surdologopedami czy fizjoterapeutami.
+					Warto o tym **rozmawiać** z chorymi, księżmi, psychologami, neurologopedami czy fizjoterapeutami.
 				</script>
 			</section>
 			<section data-markdown data-background-image="imgs/bg.png"> 
@@ -223,17 +223,18 @@
 
 			<section data-markdown data-background-image="imgs/bg.png"> 
 				<script type="text/template">
+					## <span style="font-family: Sigmar One !important;">Dziękuje</span>
+
 					<video id=thx src="vids/thx.mp4" style="max-height: 480px; ">
 					</video><video id=black src="vids/black.mp4" style="margin-left: 10px" controls/>
 				</script>
 				<script>
-					console.info("ala")
 					var setPlay = function(){
+						var thx = document.getElementById('thx');						
 						var black = document.getElementById('black');
 						black.ontimeupdate = function(){
 							var time = black.currentTime;
 							if (black.currentTime > 31 && !black.ended) {
-								var thx = document.getElementById('thx');
 								if (thx.ended || thx.paused || thx.currentTime <= 0){
 									thx.play();
 								}
