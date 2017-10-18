@@ -68,6 +68,14 @@
 			margin-left: -40px !important;			
 		}
 
+		.big-code code {
+			max-height: 900px !important;
+		}
+
+		.big-code pre {
+			width: 100% !important;
+		}
+
 		html, body, #tv {
 	padding: 0;
 	margin: 0;
@@ -502,6 +510,36 @@
 					```
 				</script>
 			</section>
+
+			<section data-markdown class=big-code>
+				<script type="text/template" >
+			```		
+			Compiled from "Point.scala"
+			public class Point implements scala.Product,scala.Serializable {
+			  private final int a;
+			  private final int b;
+			  public static scala.Option<scala.Tuple2<java.lang.Object, java.lang.Object>> unapply(Point);
+			  public static Point apply(int, int);
+			  public static scala.Function1<scala.Tuple2<java.lang.Object, java.lang.Object>, Point> tupled();
+			  public static scala.Function1<java.lang.Object, scala.Function1<java.lang.Object, Point>> curried();
+			  public int a();
+			  public int b();
+			  public Point copy(int, int);
+			  public int copy$default$1();
+			  public int copy$default$2();
+			  public java.lang.String productPrefix();
+			  public int productArity();
+			  public java.lang.Object productElement(int);
+			  public scala.collection.Iterator<java.lang.Object> productIterator();
+			  public boolean canEqual(java.lang.Object);
+			  public int hashCode();
+			  public java.lang.String toString();
+			  public boolean equals(java.lang.Object);
+			  public Point(int, int);
+			}
+			```
+		</script>
+	</section>
 
 			<section data-markdown>
 				<script type="text/template">
