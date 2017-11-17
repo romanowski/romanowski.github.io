@@ -234,7 +234,7 @@
 						var black = document.getElementById('black');
 						black.ontimeupdate = function(){
 							var time = black.currentTime;
-							if (black.currentTime > 31 && !black.ended) {
+							if (black.currentTime > 28 && !black.ended) {
 								if (thx.ended || thx.paused || thx.currentTime <= 0){
 									thx.play();
 								}
