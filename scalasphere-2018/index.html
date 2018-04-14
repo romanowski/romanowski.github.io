@@ -14,6 +14,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 	<link href="https://fonts.googleapis.com/css?family=Frijole" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Amatic+SC:700|Gugi" rel="stylesheet">
 
 	<link rel="stylesheet" href="css/reveal.css">
 	<link rel="stylesheet" href="css/theme/black.css" id="theme">
@@ -78,6 +79,14 @@
 			width: 100% !important;
 		}
 
+		span.fragment {
+			display: none;
+		}
+
+		span.fragment.visible {
+			display: inline;
+		}
+
 		html,
 		body,
 		#tv {
@@ -96,6 +105,10 @@
 			transform: translate3d(0, 0, 0);
 			-webkit-backface-visibility: hidden;
 			-webkit-perspective: 1000;
+		}
+
+		.trees img {
+			margin: 0px !important;
 		}
 	</style>
 
@@ -127,11 +140,10 @@
 		<!-- Any section element inside of this container is displayed as a slide -->
 		<div class="slides">
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_00.jpg" style="padding-top: 235px;">
 				<script type="text/template">
+				
 				### Krzysztof Romanowski
-
-				romanowski.kr@gmail.com
 
 				<div style="margin-left: 36% text-align: left;">
 					<img src="imgs/gh.png" style="margin: 0px"> romanowski
@@ -139,18 +151,18 @@
 					<img src="imgs/twitter.png" style="margin: 0px"> `RomanowskiKr`
 
 				</div>
-				<img src="imgs/vl.png" alt="Virtus Lab" style="box-shadow: none"/>
+				<img src="imgs/vl-white.png" alt="Virtus Lab" style="box-shadow: none"/>
 			</script>
 			</section>
 
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
 				### Who am I?
 
 				* 6 years in <span class="marked">Scala</span>
 				* Tooling for scala huge <span class="marked2">monorepo</span>:
-					* over <span class="marked">2 MLOC</span>
+					* over <span class="marked">2,5 MLOC</span>
 					* over 200 devs, <span class="marked">30 PRs/day</span>
 					* compilation over <span class="marked2">40 mins<span class="marked">
 				* <span class="marked">github</span>.com/romanowski/<span class="marked">hoarder</span>
@@ -168,7 +180,7 @@
 			</script>
 			</section>
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
 				Slides:
 
@@ -176,44 +188,109 @@
 			</script>
 			</section>
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
 				## <span class="marked">bytecode</span> we all <span class="marked">runnin'</span>
 			</script>
 			</section>
 
 			<section>
-				<section data-markdown>
+				<section data-markdown data-background-image="imgs/ss_nn.jpg">
 					<script type="text/template">
-						Do you know how default paramters are implemented?	
+						Do you know how 
+						<h2>
+						<span class="fragment fade-in" data-fragment-index="1">
+							<span class="marked fragment fade-out" data-fragment-index="2">default parameter</span></span></br>
+						<span class="fragment fade-in" data-fragment-index="2"> 
+							<span class="marked fragment fade-out" data-fragment-index="3">self in trains</span> </span></br>
+						<span class="fragment fade-in marked" data-fragment-index="3">private[this]</span>
+						</h2>
+						is implemented?	
 					</script>
 				</section>
-				<section data-markdown>
+				<section data-markdown data-background-image="imgs/ss_nn.jpg">
 					<script type="text/template">
 						...
 					</script>
 				</section>
 			</section>
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
-					<span class="marked">Performance!</span>
+					<img src="imgs/not-today.jpg"/>
 			</script>
 			</section>
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
-					How can I write fast and elegant (byte)code in Scala?
+					## <span class="marked">Performance</span>
+
+					### <span class="marked2 fragment">benchmarking</span>
+
+					<img class="fragment" style="max-height: 275px;" src="imgs/no-idea.jpg"/>
 				</script>
 			</section>
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
-					<img src="imgs/tree.png"/>
+					<img src="imgs/scala-benchmark.png"/>
+
+					<a class="small" href="https://developer.lightbend.com/blog/2017-06-12-faster-scala-compiler/">
+						developer.lightbend.com/blog/2017-06-12-faster-scala-compiler</span>
 				</script>
 			</section>
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="imgs/li.png"/>
+
+					<a class="small" href="http://www.lihaoyi.com/post/BenchmarkingScalaCollections">lihaoyi.com/post/BenchmarkingScalaCollections</span>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<h4>
+						<span class="fragment zoom-in marked2" data-fragment-index="3">How</span>
+						 can I write fast 
+						 <span class="fragment marked2" data-fragment-index="2">and elegant</span>
+						 <span class="fragment marked" data-fragment-index="1">byte</span>code in Scala?
+					</h4>
+					</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+						<img src="imgs/tree.png"/>
+					<div/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="imgs/player-traits.png"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="imgs/benchmarks-code.png"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="imgs/benchmarks-def.png"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="imgs/Baselines.png"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
 					I tried:
 
@@ -234,7 +311,7 @@
 			</section>
 
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
 					Results:
 
@@ -242,7 +319,7 @@
 				</script>
 			</section>
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
 					Results:
 
@@ -250,50 +327,39 @@
 				</script>
 			</section>
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
 					Wait should I even care?
 				</script>
 			</section>
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
 					JIT, how much is needed to warm jvm?
 				</script>
 			</section>
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
 					Scalac results after 100+ compilations
 				</script>
 			</section>
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
 					What warm ups fastest?
 				</script>
 			</section>
 
-			<section data-markdown>
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
 				<script type="text/template">
 					// median in batched interations...
 				</script>
 			</section>
-			
-			<section data-markdown>
+
+			<section data-markdown data-background-image="imgs/ss_99.jpg" style="padding-bottom: 435px;">
 				<script type="text/template">
-				### Krzysztof Romanowski
-
-				romanowski.kr@gmail.com
-
-				<div style="margin-left: 36% text-align: left;">
-					<img src="imgs/gh.png" style="margin: 0px"> romanowski
-					<br/>
-					<img src="imgs/twitter.png" style="margin: 0px"> `RomanowskiKr`
-
-				</div>
-
-				<img src="imgs/vl.png" alt="Virtus Lab" style="box-shadow: none"/>
+					Thanks!
 			</script>
 			</section>
 
