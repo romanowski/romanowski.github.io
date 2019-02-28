@@ -1,0 +1,4 @@
+1. Intro
+ - scala and małogosia
+ - sphere.it and Kotlin
+ - Virt
