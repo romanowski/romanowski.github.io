@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>The bytecode we all runnin'</title>
+	<meta name="description" content="TODO">
+	<meta name="author" content="Krzysztof Romanowski">
+
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+	<link href="https://fonts.googleapis.com/css?family=Frijole" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Amatic+SC:700|Gugi" rel="stylesheet">
+
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/black.css" id="theme">
+	<link rel="icon" href="imgs/favicon-32.png" type="image/png">
+
+	<!-- Code syntax highlighting -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<style type="text/css">
+		.lefty {
+			text-align: left;
+			font-size: 65% !important;
+			margin-left: 5% !important;
+		}
+
+		.marked {
+			color: #bf3c3c !important;
+		}
+
+		.marked2 {
+			color: #42affa !important;
+		}
+
+		.bigger {
+			font-size: 130% !important;
+		}
+
+		.small {
+			font-size: 40% !important;
+		}
+
+		img {
+			background: none;
+			border: none;
+			box-shadow: none"
+
+		}
+
+		.monads {
+			z-index: -5;
+			position: fixed;
+			top: -10%;
+			left: -10%;
+			width: 200px;
+		}
+
+		.right {
+			text-align: right;
+			margin-right: -40px !important;
+		}
+
+		.left {
+			text-align: left;
+			margin-left: -40px !important;
+		}
+
+		.big-code code {
+			max-height: 900px !important;
+		}
+
+		.big-code pre {
+			width: 100% !important;
+		}
+
+		.disappear .fragment {
+			display: none;
+		}
+
+		.disappear .fragment.current-fragment {
+			display: block;
+		}
+
+		html,
+		body {
+			padding: 0;
+			margin: 0;
+			width: 100%;
+			height: 100%;
+		}
+
+		.trees img {
+			margin: 0px !important;
+		}
+
+	</style>
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+
+
+	</script>
+
+	<!--[if lt IE 9]>
+	<script src="lib/js/html5shiv.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+
+	<img src="imgs/vl.png" alt="Virtus Lab" style="background: none; border: none; box-shadow: none; position: absolute; bottom:10%; right: 10%;"
+	/>
+
+	<!--<canvas id="tv"></canvas>-->
+
+	<div class="reveal">
+
+		<!-- Any section element inside of this container is displayed as a slide -->
+		<div class="slides">
+
+			<section data-markdown data-background-image="imgs/ss_00.jpg" style="padding-top: 180px;">
+				<script type="text/template">
+				## Hard bechmarking
+				</br>
+				#### <span class="markeda2">Krzysztof Romanowski</span>
+
+				<img src="imgs/vl-white.png" alt="Virtus Lab" style="box-shadow: none; max-width:260px;"/>
+			</script>
+			</section>
+
+            <section data-markdown data-background-image="imgs/ss_00.jpg" style="padding-top: 180px;">
+                <script type="text/template">
+                Without Fury
+                </script>
+            </section>
+
+
+            <section data-markdown data-background-image="imgs/vl-tech.png" data-background-size=cover>
+				<script type="text/template">
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+				#### <span class="markeda2">Who am I?</span>
+
+				* 6 years in <span class="marked">Scala</span>
+				* Tooling for scala huge <span class="marked2">monorepo</span>:
+					* over <span class="marked">2,5 MLOC</span>
+					* over 200 devs, <span class="marked">30 PRs/day</span>
+					* compilation over <span class="marked2">40 mins<span class="marked">
+				* <span class="marked">github</span>.com/romanowski/<span class="marked">hoarder</span>
+
+				<br>
+
+				<div style="margin-left: 36% text-align: left;">
+					<img src="imgs/gh.png" style="margin: 0px"> romanowski
+					|
+					<img src="imgs/twitter.png" style="margin: 0px"> `RomanowskiKr`
+				</div>
+
+			</script>
+			</section>
+
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="imgs/not-today.jpg"/>
+			</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					## <span class="marked">Performance</span>
+
+					### <span class="marked2 fragment">benchmarking</span>
+
+					<img class="fragment" style="max-height: 275px;" src="imgs/no-idea.jpg"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+				Let's benchmark!
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+						<img src="imgs/tree.png"  class="scale"/>
+					<div/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="imgs/player-traits.png"  class="scale"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="imgs/benchmarks-code.png" class="scale"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="imgs/benchmarks-def.png" class="scale"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="code/charts/Baselines-Hot.png"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="imgs/scroll.png"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<div>
+						<img src="code/charts/Java-vs.-Scalac-Hot.png"/>
+					</div>
+					<div class="small" style="margin-top: -20px;">
+						~93% slower (0.259 vs. 0.134) | ~329% more overhead (0.163 vs. 0.038)</div>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					### Let's benchmark:
+					#### Pattern matching
+					#### lambdas
+					#### wrapping (in Try)
+					#### typeclasses
+
+					<img src="imgs/popcorn.jpg"/><img src="imgs/popcorn.jpg"/><img src="imgs/popcorn.jpg"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+						#### Pattern matching
+						<div>
+							<img src="code/charts/Scala-code-styles-0..4-Hot.png" style="position: absolute; z-index: -1;"/>
+							<img src="code/charts/Scala-code-styles-1..4-Hot.png" class="fragment"/>
+						</div>
+						<div class="fragment small" style="margin-top: -20px;">
+							~82% slower (0.220 vs. 0.121) | ~396% more overhead (0.124 vs. 0.025)							)
+						</div>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+						#### wrapping (in Try)
+						<div>
+						<img src="code/charts/Scala-code-styles-1..4-Hot.png" style="position: absolute; z-index: -1;"/>
+						<img src="code/charts/Scala-code-styles-2..4-Hot.png" class="fragment"/>
+					</div>
+					<div class="fragment small" style="margin-top: -20px;">
+							~310% slower (0.496 vs. 0.121) | ~1500% more overhead (0.4 vs. 0.025)
+					</div>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+						#### lambdas
+						<div>
+							<img src="code/charts/Scala-code-styles-2..4-Hot.png" style="position: absolute; z-index: -1;"/>
+							<img src="code/charts/Scala-code-styles-3..4-Hot.png" class="fragment"/>
+						</div>
+						<div class="fragment small" style="margin-top: -20px;">
+								~122% slower (0.269 vs. 0.121) | ~592% more overhead (0.173 vs. 0.025)
+						</div>
+				</script>
+			</section>
+
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+						#### typeclasses
+						<div>
+						<img src="code/charts/Scala-code-styles-3..4-Hot.png" style="position: absolute; z-index: -1;"/>
+						<img src="code/charts/Scala-code-styles-4..4-Hot.png" class="fragment"/>
+						</div>
+						<div class="fragment small" style="margin-top: -20px;">
+								~70% slower (0.206 vs. 0.121) | ~340% more overhead (0.11 vs. 0.025)
+						</div>
+				</script>
+			</section>
+
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="imgs/fix-patmat.jpg"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+						<img src="code/charts/Fixing-pattern-matching-Hot.png"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="imgs/wat1.jpg" style="max-width: 250px;"/>
+					<img src="imgs/wat4.jpg" style="max-width: 250px;"/>
+					<img src="imgs/wat3.jpg" style="max-width: 250px;"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+						<img src="code/charts/Fixing-pattern-matching-Hot.png"/>
+						<div class="small" style="margin-top: -20px;">
+								~764% slower (1.046 vs. 0.121) | ~3700% more overhead (0.95 vs. 0.025)
+						</div>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+						<img src="code/charts/Classes-pattern-matching-Hot.png"/>
+						<div class="small" style="margin-top: -20px;">
+								~119% slower (0.265 vs. 0.121) | ~575% more overhead (0.119 vs. 0.025)
+						</div>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+						<img src="code/charts/Optimized-pattern-matching-Hot.png"/>
+						<div class="small" style="margin-top: -20px;">
+								~143% slower (0.294 vs. 0.121) | ~692% more overhead (0.198 vs. 0.025)
+						</div>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					And we can check such things for hours...
+
+					<br/>
+
+					Try it yourself: github.com/romanowski/scala-bcode
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					JIT, how time much is needed to warm you?
+					<img src="imgs/how-long-jvm.jpg"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					Let's benchmark it!
+					<img src="imgs/warmingBenchmark-code.png"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="code/charts/warming-full/java-vs.-scalac.png"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					Warmup charts for different scala styles...
+					<img src="imgs/lines-paiting.jpg" class="fragment"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="code/charts/warming-full/scala-styles.png"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="code/charts/warming-full/typeclasses-and-patern-matching.png"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="code/charts/warming-partial/pattern-matching.png"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<img src="code/charts/warming-full/lambdas-and-wrapping.png"/>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					github.com/romanowski/scala-bcode
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<span class="fragmenta"><span class="marked2">Java-like-code</span> is <span class="marked">the fastest</span></span>
+
+					<span class="fragment"><span class="marked2">Typeclasses</span> seem to be <span class="marked">JIT-friendly</span></span>
+
+					<span class="fragment"><span class="marked2">Lambdas</span> introduce <span class="marked">acceptable overhead</span></span>
+
+					<span class="fragment">Pattern matching on <span class="marked2">traits</span> is really
+						<span class="marked">slow</span></span><span class="fragment">, 
+							but there are ways to <span class="marked">improve</span> it</span>
+
+					<span class="fragment">Everything is <span class="marked">slow</span> on <span class="marked2">cold JVM</span></span><span class="fragment">,
+						however <span class="marked2">pattern matching</span> is optimized <span class="marked">earlier</span></span>
+
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					<span class="marked2">'Fancier'</span> code styles are <span class="marked">many times</span> slower.
+
+					<span class="fragment">It is probably <span class="marked">not a problem</span> in your buisness code
+					</span>
+					<span class="fragment">
+					unless it mostly <span class="marked2">traverses</span> structures or <span class="marked2">decomposes</span> complicated types.
+					</span>
+
+					<br/>
+
+					<span class="fragment">
+							<span class="marked">Scalac</span> spent most time <span class="marked2">traversing and decomposing</span>.
+					</span>
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_nn.jpg">
+				<script type="text/template">
+					> Trust no one, bench everything.
+				</script>
+			</section>
+
+			<section data-markdown data-background-image="imgs/ss_99.jpg" style="padding-bottom: 435px;">
+				<script type="text/template">
+					More: github.com/romanowski/scala-bcode
+			</script>
+			</section>
+
+			<!-- ################################################################################################################ -->
+		</div>
+
+	</div>
+
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.js"></script>
+
+	<script>
+
+		// The full list of configuration options available at:
+		// https://github.com/hakimel/reveal.js#configuration
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			history: true,
+			center: true,
+
+			transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+			// Optional reveal.js plugins
+			dependencies: [
+				{ src: 'lib/js/classList.js', condition: function () { return !document.body.classList; } },
+				{ src: 'plugin/markdown/marked.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+				{ src: 'plugin/markdown/markdown.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+				{ src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } },
+				{ src: 'plugin/zoom-js/zoom.js', async: true },
+				{ src: 'plugin/notes/notes.js', async: true }
+			]
+		});
+
+	</script>
+
+</body>
+
+</html>
